@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon server/index.js"
+        "start": "nodemon index.js"
     },
     "repository": {
         "type": "git",
@@ -21,6 +21,7 @@
         "eslint": "^6.4.0",
         "eslint-config-voidpumpkin": "ssh://git@github.com:voidpumpkin/eslint-config-voidpumpkin.git",
         "koa": "^2.8.1",
+        "koa-bodyparser": "^4.2.1",
         "koa-router": "^7.4.0",
         "nodemon": "^1.19.2",
         "prettier": "^1.18.2",

@@ -1,13 +1,10 @@
-const Task = (sequelize, DataTypes) => {
-    return sequelize.define('task', {
-        name: {
+module.exports = (sequelize, DataTypes) => {
+    const Task = sequelize.define('task', {
+        title: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        details: {
-            type: DataTypes.STRING
-            // allowNull defaults to true
-        }
+        details: DataTypes.STRING
     });
+    return Task;
 };
-module.exports = Task;
