@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/voidpumpkin/project-manager-be/issues"
   },
-  "homepage": "https://github.com/voidpumpkin/project-manager-be#readme"
+  "homepage": "https://github.com/voidpumpkin/project-manager-be#readme",
+  "dependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-voidpumpkin": "ssh://git@github.com:voidpumpkin/eslint-config-voidpumpkin.git",
+    "prettier": "^1.18.2"
+  }
 }
