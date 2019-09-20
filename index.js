@@ -4,8 +4,8 @@ const bodyParser = require('koa-bodyparser');
 
 //Routes
 const routes = require('./routes');
+const Project = require('./routes/Project');
 const Task = require('./routes/Task');
-const Tasks = require('./routes/Tasks');
 
 const app = new Koa();
 const router = new Router();
@@ -15,8 +15,7 @@ app.use(bodyParser())
     .use(router.allowedMethods());
 
 router.use('/', routes);
-router.use('/task', Task);
-router.use('/tasks', Tasks);
-// router.post('/task', addTask);
+router.use('/projects', Project);
+router.use('/tasks', Task);
 
 app.listen(3000, () => console.log('Started...'));
