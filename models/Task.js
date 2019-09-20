@@ -1,10 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
+    const { STRING } = DataTypes;
     const Task = sequelize.define('task', {
         title: {
-            type: DataTypes.STRING,
+            type: STRING,
             allowNull: false
         },
-        details: DataTypes.STRING
+        details: STRING
     });
 
     Task.associate = models => {

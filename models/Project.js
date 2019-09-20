@@ -1,10 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
+    const { STRING } = DataTypes;
     const Project = sequelize.define('project', {
         title: {
-            type: DataTypes.STRING,
+            type: STRING,
             allowNull: false
         },
-        details: DataTypes.STRING
+        details: STRING
     });
 
     return Project;
