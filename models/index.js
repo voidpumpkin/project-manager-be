@@ -16,14 +16,13 @@ fs.readdirSync(__dirname)
         db[modelClassName] = model;
     });
 
-//FIXME: Should use migrations
-sequelize.sync();
-
 for (modelName in db) {
     if (db[modelName].associate) {
         db[modelName].associate(db);
     }
 }
+//Must be done after updating associations
+sequelize.sync();
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

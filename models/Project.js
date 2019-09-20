@@ -8,5 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         details: STRING
     });
 
+    Project.associate = models => {
+        const { Project, Task } = models;
+        Project.hasMany(Task, { onDelete: 'CASCADE', foreignKey: { allowNull: false } });
+    };
+
     return Project;
 };

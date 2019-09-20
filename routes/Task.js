@@ -14,15 +14,15 @@ router
         ctx.status = 200;
     })
     .post('/', async ctx => {
-        const { title, details } = ctx.request.body;
-        ctx.body = await Task.create({ title, details });
+        const { title, details, projectId, taskId } = ctx.request.body;
+        ctx.body = await Task.create({ title, details, projectId, taskId });
         ctx.status = 200;
     })
     .put('/:id', async ctx => {
         const { id } = ctx.params;
-        const { title, details } = ctx.request.body;
+        const { title, details, projectId, taskId } = ctx.request.body;
         const task = await Task.findByPk(id);
-        await task.update({ title, details });
+        await task.update({ title, details, projectId, taskId });
         ctx.status = 204;
     })
     .delete('/:id', async ctx => {
