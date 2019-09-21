@@ -9,6 +9,7 @@ const Task = require('./routes/Task');
 
 const app = new Koa();
 const router = new Router();
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser())
     .use(router.routes())
@@ -18,4 +19,4 @@ router.use('/', routes);
 router.use('/projects', Project);
 router.use('/tasks', Task);
 
-app.listen(3000, () => console.log('Started...'));
+app.listen(PORT, () => console.log('Started...'));
