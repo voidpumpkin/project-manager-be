@@ -1,34 +1,32 @@
 const Router = require('koa-router');
-const { Task } = require('../models');
+const { getAll, get, create, update, destroy } = require('../services/Task');
 
 const router = new Router();
 
 router
     .get('/', async ctx => {
-        ctx.body = await Task.findAll();
+        ctx.body = await getAll();
         ctx.status = 200;
     })
     .get('/:id', async ctx => {
         const { id } = ctx.params;
-        ctx.body = await Task.findByPk(id);
+        ctx.body = await get(id);
         ctx.status = 200;
     })
     .post('/', async ctx => {
         const { title, details, projectId, taskId } = ctx.request.body;
-        ctx.body = await Task.create({ title, details, projectId, taskId });
+        ctx.body = await create({ title, details, projectId, taskId });
         ctx.status = 200;
     })
     .put('/:id', async ctx => {
         const { id } = ctx.params;
         const { title, details, projectId, taskId } = ctx.request.body;
-        const task = await Task.findByPk(id);
-        await task.update({ title, details, projectId, taskId });
+        await update({ id, title, details, projectId, taskId });
         ctx.status = 204;
     })
     .delete('/:id', async ctx => {
         const { id } = ctx.params;
-        const task = await Task.findByPk(id);
-        await task.destroy();
+        await destroy(id);
         ctx.status = 204;
     });
 
