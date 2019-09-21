@@ -6,7 +6,9 @@ const { capitalizeFirstLetter } = require('../utils/StringUtils');
 
 let db = {};
 
-const sequelize = new Sequelize('sqlite:./project_manager_db.db');
+const sequelize = new Sequelize(
+    `sqlite:${process.env.DB_FILE_PATH || './SET_DB_NAME_IN_ENV_FILE.db'}`
+);
 
 fs.readdirSync(__dirname)
     .filter(file => file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js')
