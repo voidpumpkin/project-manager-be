@@ -20,4 +20,6 @@ router.use('/', routes);
 router.use('/projects', Project);
 router.use('/tasks', Task);
 
-app.listen(PORT, () => console.log('Started...'));
+const server = app.listen(PORT, () => console.log('Started...'));
+
+module.exports = server;

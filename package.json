@@ -4,8 +4,8 @@
     "description": "project-manager-be",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon index.js"
+        "test": "cross-env NODE_ENV=test mocha ./test/**/*.test.js",
+        "start": "nodemon index.js",
     },
     "repository": {
         "type": "git",
@@ -18,12 +18,16 @@
     },
     "homepage": "https://github.com/voidpumpkin/project-manager-be#readme",
     "dependencies": {
+        "chai": "^4.2.0",
+        "chai-http": "^4.3.0",
+        "cross-env": "^6.0.0",
         "dotenv": "^8.1.0",
         "eslint": "^6.4.0",
         "eslint-config-voidpumpkin": "ssh://git@github.com:voidpumpkin/eslint-config-voidpumpkin.git",
         "koa": "^2.8.1",
         "koa-bodyparser": "^4.2.1",
         "koa-router": "^7.4.0",
+        "mocha": "^6.2.0",
         "nodemon": "^1.19.2",
         "prettier": "^1.18.2",
         "sequelize": "^5.19.0",
