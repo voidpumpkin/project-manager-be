@@ -15,6 +15,6 @@ app.use(indexRouter(public).middleware())
     .use(projectRouter(public).middleware())
     .use(taskRouter(public).middleware());
 
-const server = app.listen(PORT, () => console.log('Started...'));
+const server = app.listen(PORT, () => console.log(`Started on ... http://localhost:${PORT}`));
 
 module.exports = server;
