@@ -16,27 +16,42 @@ describe('routes : Task', () => {
     describe('GET /tasks/:id', () => {
         it('should return task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            chai.request(server)
+            await chai
+                .request(server)
                 .get('/tasks/2')
-                .end((err, res) => {
-                    expect(err).to.not.exist;
+                .then(res => {
                     expect(res.status).to.equal(200);
                     expect(res.type).to.equal('application/json');
                     expect(res.body.title).to.equal('Buy PC');
                     expect(res.body.details).to.equal('from wallmart');
                     expect(res.body.projectId).to.equal(1);
                     expect(res.body.taskId).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
                 });
         });
-        //TODO: Task does not exist 400
+        it('should not return task', async () => {
+            await chai
+                .request(server)
+                .get('/tasks/22')
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('task with id 22 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('POST /tasks', () => {
         it('should return a task', async () => {
-            chai.request(server)
+            await chai
+                .request(server)
                 .post('/tasks')
                 .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 })
-                .end((err, res) => {
-                    expect(err).to.not.exist;
+                .then(res => {
                     expect(res.status).to.equal(200);
                     expect(res.type).to.equal('application/json');
                     expect(res.body.id).to.equal(2);
@@ -44,16 +59,54 @@ describe('routes : Task', () => {
                     expect(res.body.details).to.equal('from wallmart');
                     expect(res.body.projectId).to.equal(1);
                     expect(res.body.taskId).to.equal(1);
-                    //FIXME:
-                    // expect(res.body.taskId).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
                 });
         });
-        //TODO: body not null
-        //TODO: title not null
-        //TODO: details not null
-        //TODO: projectId not null
-        //TODO: should not update a project creation date
-        //TODO: should not update a project modification date
+        it('task does not belong to the same project', async () => {
+            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await chai
+                .request(server)
+                .post('/tasks')
+                .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2, taskId: 1 })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('parent task with id 1 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a task 1', async () => {
+            await chai
+                .request(server)
+                .post('/tasks')
+                .send({ title: 'Buy PC', details: 'from wallmart', projectId: 20, taskId: 1 })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('parent project with id 20 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a task 2', async () => {
+            await chai
+                .request(server)
+                .post('/tasks')
+                .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 11 })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('parent task with id 11 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('PUT /tasks/:id', () => {
         it('should update task title', async () => {
@@ -71,7 +124,7 @@ describe('routes : Task', () => {
                     expect(projectId).to.equal(1);
                     expect(taskId).to.equal(null);
                 })
-                .catch(function(err) {
+                .catch(err => {
                     throw err;
                 });
         });
@@ -90,24 +143,60 @@ describe('routes : Task', () => {
                     expect(projectId).to.equal(1);
                     expect(taskId).to.equal(null);
                 })
-                .catch(function(err) {
+                .catch(err => {
                     throw err;
                 });
         });
-        //TODO: Task does not exist 400
-        //TODO: body not null 400
-        //TODO: title not null 400
-        //TODO: details not null 400
-        //TODO: projectId dont allow 400
-        //TODO: taskId dont allow 400
-        //TODO: id dont allow
-        //TODO: creation date dont allow 400
-        //TODO: modification date dont allow 400
+        it('should not update a task 1', async () => {
+            await chai
+                .request(server)
+                .put('/tasks/22')
+                .send({ details: 'from target' })
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('task with id 22 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a task 2', async () => {
+            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await chai
+                .request(server)
+                .put('/tasks/2')
+                .send({ projectId: 5 })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('"projectId" is not allowed');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a task 3', async () => {
+            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await chai
+                .request(server)
+                .put('/tasks/2')
+                .send({ taskId: 5 })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('"taskId" is not allowed');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('DELETE /tasks/:id', () => {
         it('should delete a task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            chai.request(server)
+            await chai
+                .request(server)
                 .delete('/tasks/2')
                 .then(async res => {
                     const task = await Task.findByPk(2);
@@ -118,7 +207,38 @@ describe('routes : Task', () => {
                     throw err;
                 });
         });
-        //TODO: negative flow delete not existing thing
-        //TODO: should delete all tasks aswell
+        it('should not delete a task', async () => {
+            await chai
+                .request(server)
+                .delete('/tasks/2')
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.text).to.equal('task with id 2 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should cacade delete a task and its sub-tasks', async () => {
+            await Task.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                projectId: 1,
+                taskId: 1
+            });
+            await chai
+                .request(server)
+                .delete('/tasks/1')
+                .then(async res => {
+                    const task = await Task.findByPk(1);
+                    const subTask = await Task.findByPk(2);
+                    expect(res.status).to.equal(204);
+                    expect(task).to.equal(null);
+                    expect(subTask).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
 });

@@ -1,25 +1,19 @@
 require('dotenv').config();
 const Koa = require('koa');
-const Router = require('koa-router');
-const bodyParser = require('koa-bodyparser');
+const Router = require('koa-joi-router');
 
-//Routes
-const routes = require('./routes');
-const Project = require('./routes/Project');
-const Task = require('./routes/Task');
+//Routers
+const indexRouter = require('./routes');
+const projectRouter = require('./routes/Project');
+const taskRouter = require('./routes/Task');
 
 const app = new Koa();
-const router = new Router();
+const public = Router();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser())
-    .use(router.routes())
-    .use(router.allowedMethods());
-
-router
-    .use('/', routes)
-    .use('/projects', Project)
-    .use('/tasks', Task);
+app.use(indexRouter(public).middleware())
+    .use(projectRouter(public).middleware())
+    .use(taskRouter(public).middleware());
 
 const server = app.listen(PORT, () => console.log('Started...'));
 

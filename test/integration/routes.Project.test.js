@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../index');
-const { sequelize, Project } = require('../../models');
+const { sequelize, Project, Task } = require('../../models');
 
 describe('routes : Project', () => {
     beforeEach(async () => {
@@ -14,38 +14,154 @@ describe('routes : Project', () => {
     describe('GET /projects/:id', () => {
         it('should return project', async () => {
             await Project.create({ title: 'Create character', details: 'just copy from internet' });
-            chai.request(server)
+            await chai
+                .request(server)
                 .get('/projects/1')
-                .end((err, res) => {
-                    expect(err).to.not.exist;
+                .then(res => {
                     expect(res.status).to.equal(200);
                     expect(res.type).to.equal('application/json');
                     expect(res.body.title).to.equal('Create character');
                     expect(res.body.details).to.equal('just copy from internet');
+                })
+                .catch(err => {
+                    throw err;
                 });
         });
-        //TODO: Project does not exist 400
+        it('should not return project', async () => {
+            await chai
+                .request(server)
+                .get('/projects/1')
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('project with id 1 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('POST /projects', () => {
         it('should return a project', async () => {
-            chai.request(server)
+            await chai
+                .request(server)
                 .post('/projects')
                 .send({ title: 'Create character', details: 'just copy from internet' })
-                .end((err, res) => {
-                    expect(err).to.not.exist;
+                .then(res => {
                     expect(res.status).to.equal(200);
                     expect(res.type).to.equal('application/json');
                     expect(res.body.id).to.equal(1);
                     expect(res.body.title).to.equal('Create character');
                     expect(res.body.details).to.equal('just copy from internet');
+                })
+                .catch(err => {
+                    throw err;
                 });
         });
-        //TODO: body not null
-        //TODO: title not null
-        //TODO: details not null
-        //TODO: projectId not null
-        //TODO: should not update a project creation date
-        //TODO: should not update a project modification date
+        it('should not return a project 1', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({})
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('child "title" fails because ["title" is required]');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 2', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ title: null })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal(
+                        'child "title" fails because ["title" must be a string]'
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 3', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ title: '' })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal(
+                        'child "title" fails because ["title" is not allowed to be empty]'
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 4', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ title: 'a', details: null })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal(
+                        'child "details" fails because ["details" must be a string]'
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 5', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ projectId: 1, title: 'a', details: '' })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('"projectId" is not allowed');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 6', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ createdAt: new Date(), title: 'a', details: '' })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('"createdAt" is not allowed');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not return a project 7', async () => {
+            await chai
+                .request(server)
+                .post('/projects')
+                .send({ updatedAt: new Date(), title: 'a', details: '' })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('"updatedAt" is not allowed');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('PUT /projects/:id', () => {
         it('should update a project title', async () => {
@@ -61,7 +177,7 @@ describe('routes : Project', () => {
                     expect(title).to.equal('Draw character');
                     expect(details).to.equal('just copy from internet');
                 })
-                .catch(function(err) {
+                .catch(err => {
                     throw err;
                 });
         });
@@ -78,18 +194,86 @@ describe('routes : Project', () => {
                     expect(title).to.equal('Create character');
                     expect(details).to.equal('just copy from pinterest');
                 })
-                .catch(function(err) {
+                .catch(err => {
                     throw err;
                 });
         });
-        //TODO: Project does not exist 400
-        //TODO: body not null 400
-        //TODO: title not null 400
-        //TODO: details not null 400
-        //TODO: projectId dont allow 400
-        //TODO: id dont allow
-        //TODO: creation date dont allow 400
-        //TODO: modification date dont allow 400
+        it('should update a project nothing', async () => {
+            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await chai
+                .request(server)
+                .put('/projects/1')
+                .send({})
+                .then(async res => {
+                    const { title, details } = await Project.findByPk(1);
+                    expect(res.status).to.equal(204);
+                    expect(title).to.equal('Create character');
+                    expect(details).to.equal('just copy from internet');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a project 1', async () => {
+            await chai
+                .request(server)
+                .put('/projects/1')
+                .send({ details: 'just copy from pinterest' })
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('project with id 1 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a project 2', async () => {
+            await chai
+                .request(server)
+                .put('/projects/1')
+                .send({ details: 'just copy from pinterest' })
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('project with id 1 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a project 3', async () => {
+            await chai
+                .request(server)
+                .put('/projects/1')
+                .send({ title: null })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal(
+                        'child "title" fails because ["title" must be a string]'
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should not update a project 4', async () => {
+            await chai
+                .request(server)
+                .put('/projects/1')
+                .send({ title: '' })
+                .then(res => {
+                    expect(res.status).to.equal(400);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal(
+                        'child "title" fails because ["title" is not allowed to be empty]'
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
     describe('DELETE /projects/:id', () => {
         it('should delete a project', async () => {
@@ -106,7 +290,34 @@ describe('routes : Project', () => {
                     throw err;
                 });
         });
-        //TODO: negative flow delete not existing thing
-        //TODO: should delete all tasks aswell
+        it('should not delete a project', async () => {
+            await chai
+                .request(server)
+                .delete('/projects/1')
+                .then(res => {
+                    expect(res.status).to.equal(422);
+                    expect(res.text).to.equal('project with id 1 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('should cacade delete a project and its tasks', async () => {
+            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Task.create({ title: 'C', details: '', projectId: 1 });
+            await chai
+                .request(server)
+                .delete('/projects/1')
+                .then(async res => {
+                    const task = await Task.findByPk(1);
+                    const project = await Project.findByPk(1);
+                    expect(res.status).to.equal(204);
+                    expect(project).to.equal(null);
+                    expect(task).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
 });

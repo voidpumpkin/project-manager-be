@@ -1,33 +1,101 @@
-const Router = require('koa-router');
+const Joi = require('koa-joi-router').Joi;
 const { getAll, get, create, update, destroy } = require('../services/Project');
 
-const router = new Router();
+const routes = [
+    {
+        method: 'get',
+        path: '/projects',
+        handler: async ctx => {
+            ctx.body = await getAll();
+            ctx.status = 200;
+        }
+    },
+    {
+        method: 'get',
+        path: '/projects/:id',
+        validate: {
+            params: {
+                id: Joi.number()
+            }
+        },
+        handler: async ctx => {
+            const { id } = ctx.params;
+            if ((await get(id)) === null) {
+                ctx.body = `project with id ${id} does not exist`;
+                ctx.status = 422;
+            } else {
+                ctx.body = await get(id);
+                ctx.status = 200;
+            }
+        }
+    },
+    {
+        method: 'post',
+        path: '/projects',
+        validate: {
+            type: 'json',
+            body: {
+                title: Joi.string()
+                    .max(255)
+                    .required(),
+                details: Joi.string()
+                    .allow('')
+                    .max(255)
+                    .required()
+            }
+        },
+        handler: async ctx => {
+            const { title, details } = ctx.request.body;
+            ctx.body = await create({ title, details });
+            ctx.status = 200;
+        }
+    },
+    {
+        method: 'put',
+        path: '/projects/:id',
+        validate: {
+            type: 'json',
+            params: {
+                id: Joi.number()
+            },
+            body: {
+                title: Joi.string().max(255),
+                details: Joi.string()
+                    .allow('')
+                    .max(255)
+            }
+        },
+        handler: async ctx => {
+            const { id } = ctx.params;
+            if ((await get(id)) === null) {
+                ctx.body = `project with id ${id} does not exist`;
+                ctx.status = 422;
+            } else {
+                const { title, details } = ctx.request.body;
+                await update({ id, title, details });
+                ctx.status = 204;
+            }
+        }
+    },
+    {
+        method: 'delete',
+        path: '/projects/:id',
+        validate: {
+            params: {
+                id: Joi.number()
+            }
+        },
+        handler: async ctx => {
+            const { id } = ctx.params;
+            if ((await get(id)) === null) {
+                ctx.body = `project with id ${id} does not exist`;
+                ctx.status = 422;
+            } else {
+                await destroy(id);
+                ctx.status = 204;
+            }
+        }
+    }
+];
 
-router
-    .get('/', async ctx => {
-        ctx.body = await getAll();
-        ctx.status = 200;
-    })
-    .get('/:id', async ctx => {
-        const { id } = ctx.params;
-        ctx.body = await get(id);
-        ctx.status = 200;
-    })
-    .post('/', async ctx => {
-        const { title, details } = ctx.request.body;
-        ctx.body = await create({ title, details });
-        ctx.status = 200;
-    })
-    .put('/:id', async ctx => {
-        const { id } = ctx.params;
-        const { title, details } = ctx.request.body;
-        await update({ id, title, details });
-        ctx.status = 204;
-    })
-    .delete('/:id', async ctx => {
-        const { id } = ctx.params;
-        await destroy(id);
-        ctx.status = 204;
-    });
-
-module.exports = router.routes();
+module.exports = router => router.route(routes);
