@@ -16,9 +16,10 @@ app.use(bodyParser())
     .use(router.routes())
     .use(router.allowedMethods());
 
-router.use('/', routes);
-router.use('/projects', Project);
-router.use('/tasks', Task);
+router
+    .use('/', routes)
+    .use('/projects', Project)
+    .use('/tasks', Task);
 
 const server = app.listen(PORT, () => console.log('Started...'));
 
