@@ -1,15 +1,27 @@
 require('dotenv').config();
 const Koa = require('koa');
 
-//Routers
-const index = require('./routes');
-const project = require('./routes/Project');
-const task = require('./routes/Task');
-
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
 
+// sessions
+const session = require('koa-session');
+app.keys = ['your-session-secret'];
+app.use(session({}, app));
+
+// authentication
+require('./auth');
+const passport = require('koa-passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+// routes
+const index = require('./routes');
+const auth = require('./routes/auth');
+const project = require('./routes/Project');
+const task = require('./routes/Task');
 app.use(index.middleware())
+    .use(auth.middleware())
     .use(project.middleware())
     .use(task.middleware());
 
