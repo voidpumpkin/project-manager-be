@@ -4,7 +4,7 @@
     "description": "project-manager-be",
     "main": "index.js",
     "scripts": {
-        "test": "cross-env NODE_ENV=test mocha ./test/**/*.test.js",
+        "test": "cross-env NODE_ENV=test PORT=9229 mocha ./test/**/*.test.js",
         "start": "nodemon index.js",
         "seed:db": "sequelize-cli db:seed:all",
         "seeds:undo": "sequelize-cli db:seed:undo:all",
