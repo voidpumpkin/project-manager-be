@@ -5,7 +5,10 @@ module.exports = (sequelize, DataTypes) => {
             type: STRING,
             allowNull: false
         },
-        details: STRING
+        details: {
+            type: STRING,
+            allowNull: false
+        }
     });
 
     Project.associate = models => {
