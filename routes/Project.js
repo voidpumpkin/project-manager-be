@@ -1,6 +1,7 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
 const { getAll, get, create, update, destroy } = require('../services/Project');
+const authMiddleware = require('../middleware/basicAuth');
 
 const router = Router();
 
@@ -8,10 +9,13 @@ const routes = [
     {
         method: 'get',
         path: '/projects',
-        handler: async ctx => {
-            ctx.body = await getAll();
-            ctx.status = 200;
-        }
+        handler: [
+            authMiddleware,
+            async ctx => {
+                ctx.body = await getAll();
+                ctx.status = 200;
+            }
+        ]
     },
     {
         method: 'get',

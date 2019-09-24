@@ -31,6 +31,7 @@
         "koa-joi-router": "^6.0.0",
         "mocha": "^6.2.0",
         "nodemon": "^1.19.2",
+        "permit": "^0.2.4",
         "prettier": "^1.18.2",
         "sequelize": "^5.19.0",
         "sequelize-cli": "^5.5.1",
