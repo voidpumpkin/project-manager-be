@@ -1,19 +1,17 @@
 require('dotenv').config();
 const Koa = require('koa');
-const Router = require('koa-joi-router');
 
 //Routers
-const indexRouter = require('./routes');
-const projectRouter = require('./routes/Project');
-const taskRouter = require('./routes/Task');
+const index = require('./routes');
+const project = require('./routes/Project');
+const task = require('./routes/Task');
 
 const app = new Koa();
-const public = Router();
 const PORT = process.env.PORT || 3000;
 
-app.use(indexRouter(public).middleware())
-    .use(projectRouter(public).middleware())
-    .use(taskRouter(public).middleware());
+app.use(index.middleware())
+    .use(project.middleware())
+    .use(task.middleware());
 
 const server = app.listen(PORT, () => console.log(`Started on ... http://localhost:${PORT}`));
 

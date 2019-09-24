@@ -1,3 +1,5 @@
+const Router = require('koa-joi-router');
+const router = Router();
 const routes = [
     {
         method: 'get',
@@ -9,4 +11,4 @@ const routes = [
     }
 ];
 
-module.exports = router => router.route(routes);
+module.exports = router.route(routes);

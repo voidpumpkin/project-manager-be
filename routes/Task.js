@@ -1,6 +1,9 @@
-const Joi = require('koa-joi-router').Joi;
+const Router = require('koa-joi-router');
+const Joi = Router.Joi;
 const { getAll, get, create, update, destroy } = require('../services/Task');
 const { get: getProject } = require('../services/Project');
+
+const router = Router();
 
 const routes = [
     {
@@ -111,4 +114,4 @@ const routes = [
     }
 ];
 
-module.exports = router => router.route(routes);
+module.exports = router.route(routes);
