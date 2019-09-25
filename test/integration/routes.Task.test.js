@@ -7,17 +7,21 @@ const server = require('../../server');
 const { sequelize, Task, Project } = require('../../models');
 
 describe('routes : Task', () => {
+    let authenticatedUser;
+
     beforeEach(async () => {
         await sequelize.sync({ force: true });
         await Project.create({ title: 'Create character', details: 'just copy from internet' });
         await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+
+        authenticatedUser = chai.request.agent(server);
+        await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
     describe('GET /tasks', () => {
-        it.only('should return projects', async () => {
+        it('should return projects', async () => {
             await Task.create({ title: 'Buy PC2', details: 'from wallmart2', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .get('/tasks')
                 .then(res => {
                     expect(res.status).to.equal(200);
@@ -36,13 +40,25 @@ describe('routes : Task', () => {
                     throw err;
                 });
         });
+        it('no auth', async () => {
+            await chai
+                .request(server)
+                .get('/tasks')
+                .then(res => {
+                    expect(res.status).to.equal(401);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('Unauthorized');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
 
     describe('GET /tasks/:id', () => {
         it('should return task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .get('/tasks/2')
                 .then(res => {
                     expect(res.status).to.equal(200);
@@ -57,13 +73,26 @@ describe('routes : Task', () => {
                 });
         });
         it('should not return task', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .get('/tasks/22')
                 .then(res => {
                     expect(res.status).to.equal(422);
                     expect(res.type).to.equal('text/plain');
-                    expect(res.text).to.equal('task with id 22 does not exist');
+                    expect(res.text).to.equal('Task with id 22 does not exist');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('no auth', async () => {
+            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await chai
+                .request(server)
+                .get('/tasks/2')
+                .then(res => {
+                    expect(res.status).to.equal(401);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('Unauthorized');
                 })
                 .catch(err => {
                     throw err;
@@ -73,8 +102,7 @@ describe('routes : Task', () => {
 
     describe('POST /tasks', () => {
         it('should return a task', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .post('/tasks')
                 .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 })
                 .then(res => {
@@ -92,8 +120,7 @@ describe('routes : Task', () => {
         });
         it('task does not belong to the same project', async () => {
             await Project.create({ title: 'Create character', details: 'just copy from internet' });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .post('/tasks')
                 .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2, taskId: 1 })
                 .then(res => {
@@ -106,8 +133,7 @@ describe('routes : Task', () => {
                 });
         });
         it('should not return a task 1', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .post('/tasks')
                 .send({ title: 'Buy PC', details: 'from wallmart', projectId: 20, taskId: 1 })
                 .then(res => {
@@ -120,8 +146,7 @@ describe('routes : Task', () => {
                 });
         });
         it('should not return a task 2', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .post('/tasks')
                 .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 11 })
                 .then(res => {
@@ -133,13 +158,26 @@ describe('routes : Task', () => {
                     throw err;
                 });
         });
+        it('no auth', async () => {
+            await chai
+                .request(server)
+                .post('/tasks')
+                .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 })
+                .then(res => {
+                    expect(res.status).to.equal(401);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('Unauthorized');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
 
     describe('PUT /tasks/:id', () => {
         it('should update task title', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .put('/tasks/2')
                 .send({ title: 'Buy better PC' })
                 .then(async res => {
@@ -157,8 +195,7 @@ describe('routes : Task', () => {
         });
         it('should update task details', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .put('/tasks/2')
                 .send({ details: 'from target' })
                 .then(async res => {
@@ -175,14 +212,13 @@ describe('routes : Task', () => {
                 });
         });
         it('should not update a task 1', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .put('/tasks/22')
                 .send({ details: 'from target' })
                 .then(res => {
                     expect(res.status).to.equal(422);
                     expect(res.type).to.equal('text/plain');
-                    expect(res.text).to.equal('task with id 22 does not exist');
+                    expect(res.text).to.equal('Task with id 22 does not exist');
                 })
                 .catch(err => {
                     throw err;
@@ -190,8 +226,7 @@ describe('routes : Task', () => {
         });
         it('should not update a task 2', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .put('/tasks/2')
                 .send({ projectId: 5 })
                 .then(res => {
@@ -205,8 +240,7 @@ describe('routes : Task', () => {
         });
         it('should not update a task 3', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .put('/tasks/2')
                 .send({ taskId: 5 })
                 .then(res => {
@@ -218,13 +252,27 @@ describe('routes : Task', () => {
                     throw err;
                 });
         });
+        it('no auth', async () => {
+            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await chai
+                .request(server)
+                .put('/tasks/2')
+                .send({ title: 'Buy better PC' })
+                .then(res => {
+                    expect(res.status).to.equal(401);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('Unauthorized');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
     });
 
     describe('DELETE /tasks/:id', () => {
         it('should delete a task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .delete('/tasks/2')
                 .then(async res => {
                     const task = await Task.findByPk(2);
@@ -236,12 +284,11 @@ describe('routes : Task', () => {
                 });
         });
         it('should not delete a task', async () => {
-            await chai
-                .request(server)
+            await authenticatedUser
                 .delete('/tasks/2')
                 .then(res => {
                     expect(res.status).to.equal(422);
-                    expect(res.text).to.equal('task with id 2 does not exist');
+                    expect(res.text).to.equal('Task with id 2 does not exist');
                 })
                 .catch(err => {
                     throw err;
@@ -254,8 +301,7 @@ describe('routes : Task', () => {
                 projectId: 1,
                 taskId: 1
             });
-            await chai
-                .request(server)
+            await authenticatedUser
                 .delete('/tasks/1')
                 .then(async res => {
                     const task = await Task.findByPk(1);
@@ -263,6 +309,19 @@ describe('routes : Task', () => {
                     expect(res.status).to.equal(204);
                     expect(task).to.equal(null);
                     expect(subTask).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+        it('no auth', async () => {
+            await chai
+                .request(server)
+                .delete('/tasks/2')
+                .then(res => {
+                    expect(res.status).to.equal(401);
+                    expect(res.type).to.equal('text/plain');
+                    expect(res.text).to.equal('Unauthorized');
                 })
                 .catch(err => {
                     throw err;

@@ -2,6 +2,8 @@ const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, get, create, update, destroy } = require('../services/Task');
 const { get: getProject } = require('../services/Project');
+const { AllowOnlyAuthenticated
+ } = require('../utils/Middlewares');
 
 const router = Router();
 
@@ -9,10 +11,13 @@ const routes = [
     {
         method: 'get',
         path: '/tasks',
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             ctx.body = await getAll();
             ctx.status = 200;
         }
+        ]
     },
     {
         method: 'get',
@@ -22,7 +27,9 @@ const routes = [
                 id: Joi.number()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `task with id ${id} does not exist`;
@@ -32,6 +39,7 @@ const routes = [
                 ctx.status = 200;
             }
         }
+        ]
     },
     {
         method: 'post',
@@ -50,7 +58,9 @@ const routes = [
                 taskId: Joi.number()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { title, details, projectId, taskId } = ctx.request.body;
             const project = await getProject(projectId);
             const task = await get(taskId);
@@ -65,6 +75,7 @@ const routes = [
                 ctx.status = 200;
             }
         }
+        ]
     },
     {
         method: 'put',
@@ -81,7 +92,9 @@ const routes = [
                     .max(255)
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `task with id ${id} does not exist`;
@@ -92,6 +105,7 @@ const routes = [
                 ctx.status = 204;
             }
         }
+        ]
     },
     {
         method: 'delete',
@@ -101,7 +115,9 @@ const routes = [
                 id: Joi.number()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `task with id ${id} does not exist`;
@@ -111,6 +127,7 @@ const routes = [
                 ctx.status = 204;
             }
         }
+        ]
     }
 ];
 
