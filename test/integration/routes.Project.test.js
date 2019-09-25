@@ -11,6 +11,28 @@ describe('routes : Project', () => {
         await sequelize.sync({ force: true });
     });
 
+    describe('GET /projects', () => {
+        it.only('should return projects', async () => {
+            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({ title: 'Create characte2', details: 'just copy from interne2' });
+            await chai
+                .request(server)
+                .get('/projects')
+                .then(res => {
+                    expect(res.status).to.equal(200);
+                    expect(res.type).to.equal('application/json');
+                    expect(res.body).to.have.length(2);
+                    expect(res.body[0].title).to.equal('Create character');
+                    expect(res.body[0].details).to.equal('just copy from internet');
+                    expect(res.body[1].title).to.equal('Create characte2');
+                    expect(res.body[1].details).to.equal('just copy from interne2');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+    });
+
     describe('GET /projects/:id', () => {
         it('should return project', async () => {
             await Project.create({ title: 'Create character', details: 'just copy from internet' });
@@ -41,6 +63,7 @@ describe('routes : Project', () => {
                 });
         });
     });
+
     describe('POST /projects', () => {
         it('should return a project', async () => {
             await chai
@@ -163,6 +186,7 @@ describe('routes : Project', () => {
                 });
         });
     });
+
     describe('PUT /projects/:id', () => {
         it('should update a project title', async () => {
             await Project.create({ title: 'Create character', details: 'just copy from internet' });
@@ -275,6 +299,7 @@ describe('routes : Project', () => {
                 });
         });
     });
+
     describe('DELETE /projects/:id', () => {
         it('should delete a project', async () => {
             await Project.create({ title: 'Create character', details: 'just copy from internet' });

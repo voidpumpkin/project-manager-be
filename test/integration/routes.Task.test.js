@@ -13,6 +13,31 @@ describe('routes : Task', () => {
         await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
     });
 
+    describe('GET /tasks', () => {
+        it.only('should return projects', async () => {
+            await Task.create({ title: 'Buy PC2', details: 'from wallmart2', projectId: 1 });
+            await chai
+                .request(server)
+                .get('/tasks')
+                .then(res => {
+                    expect(res.status).to.equal(200);
+                    expect(res.type).to.equal('application/json');
+                    expect(res.body).to.have.length(2);
+                    expect(res.body[0].title).to.equal('Buy PC');
+                    expect(res.body[0].details).to.equal('from wallmart');
+                    expect(res.body[0].projectId).to.equal(1);
+                    expect(res.body[0].taskId).to.equal(null);
+                    expect(res.body[1].title).to.equal('Buy PC2');
+                    expect(res.body[1].details).to.equal('from wallmart2');
+                    expect(res.body[1].projectId).to.equal(1);
+                    expect(res.body[1].taskId).to.equal(null);
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+    });
+
     describe('GET /tasks/:id', () => {
         it('should return task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
@@ -45,6 +70,7 @@ describe('routes : Task', () => {
                 });
         });
     });
+
     describe('POST /tasks', () => {
         it('should return a task', async () => {
             await chai
@@ -108,6 +134,7 @@ describe('routes : Task', () => {
                 });
         });
     });
+
     describe('PUT /tasks/:id', () => {
         it('should update task title', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
@@ -192,6 +219,7 @@ describe('routes : Task', () => {
                 });
         });
     });
+
     describe('DELETE /tasks/:id', () => {
         it('should delete a task', async () => {
             await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
