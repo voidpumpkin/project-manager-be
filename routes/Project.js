@@ -1,6 +1,8 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
 const { getAll, get, create, update, destroy } = require('../services/Project');
+const { AllowOnlyAuthenticated
+ } = require('../utils/Middlewares');
 
 const router = Router();
 
@@ -8,10 +10,13 @@ const routes = [
     {
         method: 'get',
         path: '/projects',
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             ctx.body = await getAll();
             ctx.status = 200;
         }
+        ]
     },
     {
         method: 'get',
@@ -21,7 +26,9 @@ const routes = [
                 id: Joi.number()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `project with id ${id} does not exist`;
@@ -31,6 +38,7 @@ const routes = [
                 ctx.status = 200;
             }
         }
+        ]
     },
     {
         method: 'post',
@@ -47,11 +55,14 @@ const routes = [
                     .required()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { title, details } = ctx.request.body;
             ctx.body = await create({ title, details });
             ctx.status = 200;
         }
+        ]
     },
     {
         method: 'put',
@@ -68,7 +79,9 @@ const routes = [
                     .max(255)
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `project with id ${id} does not exist`;
@@ -79,6 +92,7 @@ const routes = [
                 ctx.status = 204;
             }
         }
+        ]
     },
     {
         method: 'delete',
@@ -88,7 +102,9 @@ const routes = [
                 id: Joi.number()
             }
         },
-        handler: async ctx => {
+        handler: [
+            AllowOnlyAuthenticated,
+            async ctx => {
             const { id } = ctx.params;
             if ((await get(id)) === null) {
                 ctx.body = `project with id ${id} does not exist`;
@@ -98,6 +114,7 @@ const routes = [
                 ctx.status = 204;
             }
         }
+        ]
     }
 ];
 
