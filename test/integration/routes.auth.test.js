@@ -1,0 +1,47 @@
+const chai = require('chai');
+const expect = chai.expect;
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
+
+const server = require('../../index');
+const { sequelize } = require('../../models');
+
+describe('routes : auth', () => {
+    beforeEach(async () => {
+        await sequelize.sync({ force: true });
+    });
+
+    describe('POST /login', () => {
+        it('should succefully login', async () => {
+            await chai
+                .request(server)
+                .post('/login')
+                .send({ username: 'test', password: 'test' })
+                .then(res => {
+                    expect(res.status).to.equal(204);
+                    expect(res).to.have.cookie('koa:sess');
+                    expect(res).to.have.cookie('koa:sess.sig');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+    });
+
+    describe('POST /logout', () => {
+        it('should succefully logout', async () => {
+            await chai
+                .request(server)
+                .post('/logout')
+                .send({ username: 'test', password: 'test' })
+                .then(res => {
+                    expect(res.status).to.equal(204);
+                    expect(res).to.not.have.cookie('koa:sess');
+                    expect(res).to.not.have.cookie('koa:sess.sig');
+                })
+                .catch(err => {
+                    throw err;
+                });
+        });
+    });
+});
