@@ -3,7 +3,7 @@ const expect = chai.expect;
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
-const server = require('../../index');
+const server = require('../../server');
 
 describe('routes : index', () => {
     describe('GET /', () => {
