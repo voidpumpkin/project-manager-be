@@ -1,10 +1,10 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
 const { getAll, get, create, update, destroy } = require('../services/Project');
-const { AllowOnlyAuthenticated
- } = require('../utils/Middlewares');
+const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
 
 const router = Router();
+const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Project');
 
 const routes = [
     {
@@ -13,9 +13,9 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-            ctx.body = await getAll();
-            ctx.status = 200;
-        }
+                ctx.body = await getAll();
+                ctx.status = 200;
+            }
         ]
     },
     {
@@ -28,16 +28,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `project with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 ctx.body = await get(id);
                 ctx.status = 200;
             }
-        }
         ]
     },
     {
@@ -58,10 +54,10 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-            const { title, details } = ctx.request.body;
-            ctx.body = await create({ title, details });
-            ctx.status = 200;
-        }
+                const { title, details } = ctx.request.body;
+                ctx.body = await create({ title, details });
+                ctx.status = 200;
+            }
         ]
     },
     {
@@ -81,17 +77,13 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `project with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 const { title, details } = ctx.request.body;
                 await update({ id, title, details });
                 ctx.status = 204;
             }
-        }
         ]
     },
     {
@@ -104,16 +96,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `project with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 await destroy(id);
                 ctx.status = 204;
             }
-        }
         ]
     }
 ];

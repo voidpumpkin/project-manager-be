@@ -2,10 +2,10 @@ const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, get, create, update, destroy } = require('../services/Task');
 const { get: getProject } = require('../services/Project');
-const { AllowOnlyAuthenticated
- } = require('../utils/Middlewares');
+const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
 
 const router = Router();
+const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Task');
 
 const routes = [
     {
@@ -14,9 +14,9 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-            ctx.body = await getAll();
-            ctx.status = 200;
-        }
+                ctx.body = await getAll();
+                ctx.status = 200;
+            }
         ]
     },
     {
@@ -29,16 +29,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `task with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 ctx.body = await get(id);
                 ctx.status = 200;
             }
-        }
         ]
     },
     {
@@ -61,20 +57,20 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-            const { title, details, projectId, taskId } = ctx.request.body;
-            const project = await getProject(projectId);
-            const task = await get(taskId);
-            if (project === null) {
-                ctx.body = `parent project with id ${projectId} does not exist`;
-                ctx.status = 400;
-            } else if (task === null || projectId != task.projectId) {
-                ctx.body = `parent task with id ${taskId} does not exist`;
-                ctx.status = 400;
-            } else {
-                ctx.body = await create({ title, details, projectId, taskId });
-                ctx.status = 200;
+                const { title, details, projectId, taskId } = ctx.request.body;
+                const project = await getProject(projectId);
+                const task = await get(taskId);
+                if (project === null) {
+                    ctx.body = `parent project with id ${projectId} does not exist`;
+                    ctx.status = 400;
+                } else if (task === null || projectId != task.projectId) {
+                    ctx.body = `parent task with id ${taskId} does not exist`;
+                    ctx.status = 400;
+                } else {
+                    ctx.body = await create({ title, details, projectId, taskId });
+                    ctx.status = 200;
+                }
             }
-        }
         ]
     },
     {
@@ -94,17 +90,13 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `task with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 const { title, details, projectId, taskId } = ctx.request.body;
                 await update({ id, title, details, projectId, taskId });
                 ctx.status = 204;
             }
-        }
         ]
     },
     {
@@ -117,16 +109,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            AllowOnlyWhenIdExists,
             async ctx => {
-            const { id } = ctx.params;
-            if ((await get(id)) === null) {
-                ctx.body = `task with id ${id} does not exist`;
-                ctx.status = 422;
-            } else {
+                const { id } = ctx.params;
                 await destroy(id);
                 ctx.status = 204;
             }
-        }
         ]
     }
 ];
