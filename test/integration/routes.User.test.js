@@ -86,7 +86,8 @@ describe('routes : User', () => {
     describe('POST /users', () => {
         it('should return a user', async () => {
             try {
-                const res = await authenticatedUser
+                const res = await chai
+                    .request(server)
                     .post('/users')
                     .send({ username: 'bob', password: 'jones', isSystemAdmin: false });
                 expect(res.status).to.equal(200);
@@ -101,7 +102,8 @@ describe('routes : User', () => {
         });
         it('should return a user when isSystemAdmin true', async () => {
             try {
-                const res = await authenticatedUser
+                const res = await chai
+                    .request(server)
                     .post('/users')
                     .send({ username: 'bob', password: 'jones', isSystemAdmin: true });
                 expect(res.status).to.equal(200);
@@ -116,7 +118,8 @@ describe('routes : User', () => {
         });
         it('should return a user when no isSystemAdmin', async () => {
             try {
-                const res = await authenticatedUser
+                const res = await chai
+                    .request(server)
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
                 expect(res.status).to.equal(200);
@@ -132,25 +135,13 @@ describe('routes : User', () => {
         it('username already taken', async () => {
             await User.create({ username: 'bob', password: 'jones', isSystemAdmin: false });
             try {
-                const res = await authenticatedUser
+                const res = await chai
+                    .request(server)
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
                 expect(res.status).to.equal(409);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('username already taken');
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('no auth', async () => {
-            try {
-                const res = await chai
-                    .request(server)
-                    .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }

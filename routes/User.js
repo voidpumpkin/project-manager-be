@@ -52,7 +52,6 @@ const routes = [
             }
         },
         handler: [
-            AllowOnlyAuthenticated,
             async ctx => {
                 const { username, password, isSystemAdmin } = ctx.request.body;
                 if (await getByAtr('username', username)) {
