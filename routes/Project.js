@@ -1,6 +1,6 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { getAll, get, create, update, destroy } = require('../services/Project');
+const { getAll, getById, create, update, destroy } = require('../services/Project');
 const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
 
 const router = Router();
@@ -31,7 +31,7 @@ const routes = [
             AllowOnlyWhenIdExists,
             async ctx => {
                 const { id } = ctx.params;
-                ctx.body = await get(id);
+                ctx.body = await getById(id);
                 ctx.status = 200;
             }
         ]

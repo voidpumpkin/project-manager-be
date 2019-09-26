@@ -1,7 +1,7 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
-const { getAll, get, create, update, destroy } = require('../services/Task');
-const { get: getProject } = require('../services/Project');
+const { getAll, getById, create, update, destroy } = require('../services/Task');
+const { getById: getProjectById } = require('../services/Project');
 const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
 
 const router = Router();
@@ -32,7 +32,7 @@ const routes = [
             AllowOnlyWhenIdExists,
             async ctx => {
                 const { id } = ctx.params;
-                ctx.body = await get(id);
+                ctx.body = await getById(id);
                 ctx.status = 200;
             }
         ]
@@ -58,8 +58,8 @@ const routes = [
             AllowOnlyAuthenticated,
             async ctx => {
                 const { title, details, projectId, taskId } = ctx.request.body;
-                const project = await getProject(projectId);
-                const task = await get(taskId);
+                const project = await getProjectById(projectId);
+                const task = await getById(taskId);
                 if (project === null) {
                     ctx.body = `parent project with id ${projectId} does not exist`;
                     ctx.status = 400;

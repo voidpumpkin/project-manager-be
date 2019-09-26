@@ -4,7 +4,7 @@ exports.getAll = async () => {
     return await Project.findAll();
 };
 
-exports.get = async id => {
+exports.getById = async id => {
     return await Project.findByPk(id);
 };
 

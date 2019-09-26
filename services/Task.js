@@ -4,7 +4,7 @@ exports.getAll = async () => {
     return await Task.findAll();
 };
 
-exports.get = async id => {
+exports.getById = async id => {
     return await Task.findByPk(id);
 };
 
