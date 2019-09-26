@@ -23,10 +23,12 @@ app.use(passport.session());
 // routes
 const index = require('./routes');
 const auth = require('./routes/auth');
+const user = require('./routes/User');
 const project = require('./routes/Project');
 const task = require('./routes/Task');
 app.use(index.middleware())
     .use(auth.middleware())
+    .use(user.middleware())
     .use(project.middleware())
     .use(task.middleware());
 

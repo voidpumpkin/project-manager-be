@@ -1,13 +1,6 @@
 const passport = require('koa-passport');
 const LocalStrategy = require('passport-local').Strategy;
-
-const fetchUser = (id => {
-    // FIXME: Connect to db
-    const user = { id: 1, username: 'test', password: 'test' };
-    return async function() {
-        return user;
-    };
-})();
+const { getById, getByAtr } = require('./services/User');
 
 //save id in cookie TODO: store session in memory
 passport.serializeUser((user, done) => {
@@ -17,7 +10,7 @@ passport.serializeUser((user, done) => {
 //get id from cookie
 passport.deserializeUser(async (id, done) => {
     try {
-        const user = await fetchUser(id);
+        const user = await getById(id);
         done(null, user);
     } catch (err) {
         done(err);
@@ -25,15 +18,16 @@ passport.deserializeUser(async (id, done) => {
 });
 
 passport.use(
-    new LocalStrategy((username, password, done) => {
-        fetchUser()
-            .then(user => {
-                if (username === user.username && password === user.password) {
-                    done(null, user);
-                } else {
-                    done(null, false);
-                }
-            })
-            .catch(err => done(err));
+    new LocalStrategy(async (username, password, done) => {
+        try {
+            const user = await getByAtr('username', username);
+            if (username === user.username && password === user.password) {
+                done(null, user);
+            } else {
+                done(null, false);
+            }
+        } catch (err) {
+            done(err);
+        }
     })
 );

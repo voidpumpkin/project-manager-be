@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../server');
-const { sequelize } = require('../../models');
+const { sequelize, User } = require('../../models');
 
 describe('routes : auth', () => {
     beforeEach(async () => {
@@ -13,6 +13,7 @@ describe('routes : auth', () => {
 
     describe('POST /login', () => {
         it('should succefully login', async () => {
+            await User.create({ username: 'test', password: 'test', isSystemAdmin: true });
             try {
                 const res = await chai
                     .request(server)

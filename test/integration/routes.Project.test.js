@@ -4,13 +4,14 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../server');
-const { sequelize, Project, Task } = require('../../models');
+const { sequelize, Project, Task, User } = require('../../models');
 
 describe('routes : Project', () => {
     let authenticatedUser;
 
     beforeEach(async () => {
         await sequelize.sync({ force: true });
+        await User.create({ username: 'test', password: 'test', isSystemAdmin: true });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
