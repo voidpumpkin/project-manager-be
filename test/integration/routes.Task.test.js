@@ -14,7 +14,11 @@ describe('routes : Task', () => {
         await Project.create({ title: 'Create character', details: 'just copy from internet' });
         await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
 
-        await User.create({ username: 'test', password: 'test', isSystemAdmin: true });
+        await User.create({
+            username: 'test',
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            isSystemAdmin: true
+        });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });

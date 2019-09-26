@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const chaiHttp = require('chai-http');
+const bcrypt = require('bcrypt');
 chai.use(chaiHttp);
 
 const server = require('../../server');
@@ -11,7 +12,11 @@ describe('routes : User', () => {
 
     beforeEach(async () => {
         await sequelize.sync({ force: true });
-        await User.create({ username: 'test', password: 'test', isSystemAdmin: true });
+        await User.create({
+            username: 'test',
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            isSystemAdmin: true
+        });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
@@ -25,10 +30,10 @@ describe('routes : User', () => {
                 expect(res.type).to.equal('application/json');
                 expect(res.body).to.have.length(2);
                 expect(res.body[0].username).to.equal('test');
-                expect(res.body[0].password).to.equal('test');
+                expect(res.body[0].password).to.exist;
                 expect(res.body[0].isSystemAdmin).to.equal(true);
                 expect(res.body[1].username).to.equal('bob');
-                expect(res.body[1].password).to.equal('jones');
+                expect(res.body[1].password).to.exist;
                 expect(res.body[1].isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -54,7 +59,7 @@ describe('routes : User', () => {
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
                 expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.equal('jones');
+                expect(res.body.password).to.exist;
                 expect(res.body.isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -84,6 +89,24 @@ describe('routes : User', () => {
     });
 
     describe('POST /users', () => {
+        it('should hash password', async () => {
+            try {
+                const res = await chai
+                    .request(server)
+                    .post('/users')
+                    .send({ username: 'bob', password: 'jones', isSystemAdmin: false });
+                const { password } = await User.findByPk(2);
+                const isPasswordMatching = await bcrypt.compare('jones', password);
+                expect(res.status).to.equal(200);
+                expect(res.type).to.equal('application/json');
+                expect(res.body.id).to.equal(2);
+                expect(res.body.username).to.equal('bob');
+                expect(isPasswordMatching).to.equal(true);
+                expect(res.body.isSystemAdmin).to.equal(false);
+            } catch (err) {
+                throw err;
+            }
+        });
         it('should return a user', async () => {
             try {
                 const res = await chai
@@ -94,7 +117,7 @@ describe('routes : User', () => {
                 expect(res.type).to.equal('application/json');
                 expect(res.body.id).to.equal(2);
                 expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.equal('jones');
+                expect(res.body.password).to.exist;
                 expect(res.body.isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -110,7 +133,7 @@ describe('routes : User', () => {
                 expect(res.type).to.equal('application/json');
                 expect(res.body.id).to.equal(2);
                 expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.equal('jones');
+                expect(res.body.password).to.exist;
                 expect(res.body.isSystemAdmin).to.equal(true);
             } catch (err) {
                 throw err;
@@ -126,7 +149,7 @@ describe('routes : User', () => {
                 expect(res.type).to.equal('application/json');
                 expect(res.body.id).to.equal(2);
                 expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.equal('jones');
+                expect(res.body.password).to.exist;
                 expect(res.body.isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -156,7 +179,7 @@ describe('routes : User', () => {
                 const { username, password, isSystemAdmin } = await User.findByPk(2);
                 expect(res.status).to.equal(204);
                 expect(username).to.equal('sam');
-                expect(password).to.equal('jones');
+                expect(password).to.exist;
                 expect(isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -180,9 +203,10 @@ describe('routes : User', () => {
             try {
                 const res = await authenticatedUser.put('/users/2').send({ password: 'uncle' });
                 const { username, password, isSystemAdmin } = await User.findByPk(2);
+                const isPasswordMatching = await bcrypt.compare('uncle', password);
                 expect(res.status).to.equal(204);
                 expect(username).to.equal('bob');
-                expect(password).to.equal('uncle');
+                expect(isPasswordMatching).to.equal(true);
                 expect(isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;
@@ -195,7 +219,7 @@ describe('routes : User', () => {
                 const { username, password, isSystemAdmin } = await User.findByPk(2);
                 expect(res.status).to.equal(204);
                 expect(username).to.equal('bob');
-                expect(password).to.equal('jones');
+                expect(password).to.exist;
                 expect(isSystemAdmin).to.equal(true);
             } catch (err) {
                 throw err;
@@ -208,7 +232,7 @@ describe('routes : User', () => {
                 const { username, password, isSystemAdmin } = await User.findByPk(2);
                 expect(res.status).to.equal(204);
                 expect(username).to.equal('bob');
-                expect(password).to.equal('jones');
+                expect(password).to.exist;
                 expect(isSystemAdmin).to.equal(false);
             } catch (err) {
                 throw err;

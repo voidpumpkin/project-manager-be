@@ -1,4 +1,11 @@
+const bcrypt = require('bcrypt');
 const { User } = require('../models');
+
+const hashPassword = async password => {
+    const saltRounds = 8;
+    const salt = await bcrypt.genSalt(saltRounds);
+    return await bcrypt.hash(password, salt);
+};
 
 exports.getAll = async () => {
     return await User.findAll();
@@ -17,13 +24,15 @@ exports.getByAtr = async (atr, value) => {
 
 exports.create = async user => {
     const { username, password, isSystemAdmin = false } = user;
-    return await User.create({ username, password, isSystemAdmin });
+    const hashedPassword = await hashPassword(password);
+    return await User.create({ username, password: hashedPassword, isSystemAdmin });
 };
 
 exports.update = async user => {
     const { id, username, password, isSystemAdmin } = user;
     const projectInstance = await User.findByPk(id);
-    await projectInstance.update({ username, password, isSystemAdmin });
+    const hashedPassword = password ? await hashPassword(password) : undefined;
+    await projectInstance.update({ username, password: hashedPassword, isSystemAdmin });
 };
 
 exports.destroy = async id => {
