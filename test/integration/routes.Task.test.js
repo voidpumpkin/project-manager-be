@@ -11,14 +11,19 @@ describe('routes : Task', () => {
 
     beforeEach(async () => {
         await sequelize.sync({ force: true });
-        await Project.create({ title: 'Create character', details: 'just copy from internet' });
-        await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
 
         await User.create({
             username: 'test',
             password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
             isSystemAdmin: true
         });
+        await Project.create({
+            title: 'Create character',
+            details: 'just copy from internet',
+            managerId: 1
+        });
+        await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
@@ -111,7 +116,11 @@ describe('routes : Task', () => {
             }
         });
         it('task does not belong to the same project', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser
                     .post('/tasks')

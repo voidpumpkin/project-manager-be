@@ -8,8 +8,15 @@ exports.getById = async id => {
     return await Project.findByPk(id);
 };
 
-exports.create = async project => {
-    return await Project.create(project);
+exports.create = async (project, userId) => {
+    const { addParticipatorToProject } = require('./ProjectParticipator');
+    const { title, details, managerId = userId } = project;
+    if (managerId != userId) {
+        throw Error('Manager can only be set as yourself');
+    }
+    const projectInstance = await Project.create({ title, details, managerId });
+    await addParticipatorToProject(projectInstance.id, userId, userId);
+    return projectInstance;
 };
 
 exports.update = async project => {

@@ -15,5 +15,35 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    User.associate = models => {
+        const { Project, ProjectParticipator } = models;
+        //Is manager of
+        User.hasMany(Project, {
+            foreignKey: {
+                name: 'managerId',
+                allowNull: false,
+                references: {
+                    model: User,
+                    key: 'id'
+                }
+            }
+        });
+        //Participates in
+        User.belongsToMany(Project, {
+            through: {
+                model: ProjectParticipator,
+                unique: false
+            },
+            foreignKey: {
+                name: 'participatorId',
+                allowNull: false,
+                references: {
+                    model: User,
+                    key: 'id'
+                }
+            }
+        });
+    };
+
     return User;
 };

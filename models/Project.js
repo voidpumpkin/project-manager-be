@@ -12,8 +12,22 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Project.associate = models => {
-        const { Project, Task } = models;
+        const { Project, User, Task, ProjectParticipator } = models;
         Project.hasMany(Task, { onDelete: 'CASCADE', foreignKey: { allowNull: false } });
+        //Has participators
+        Project.belongsToMany(User, {
+            through: {
+                model: ProjectParticipator,
+                unique: false
+            },
+            foreignKey: {
+                name: 'projectId',
+                references: {
+                    model: Project,
+                    key: 'id'
+                }
+            }
+        });
     };
 
     return Project;

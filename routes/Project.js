@@ -48,15 +48,29 @@ const routes = [
                 details: Joi.string()
                     .allow('')
                     .max(255)
-                    .required()
+                    .required(),
+                managerId: Joi.number()
             }
         },
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-                const { title, details } = ctx.request.body;
-                ctx.body = await create({ title, details });
-                ctx.status = 200;
+                try {
+                    const { id: creatorId } = ctx.state.user;
+                    const { title, details, managerId } = ctx.request.body;
+                    ctx.body = await create({ title, details, managerId }, creatorId);
+                    ctx.status = 200;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },

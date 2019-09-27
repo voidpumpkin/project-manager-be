@@ -22,8 +22,16 @@ describe('routes : Project', () => {
 
     describe('GET /projects', () => {
         it('should return projects', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
-            await Project.create({ title: 'Create characte2', details: 'just copy from interne2' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
+            await Project.create({
+                title: 'Create characte2',
+                details: 'just copy from interne2',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser.get('/projects');
                 expect(res.status).to.equal(200);
@@ -51,7 +59,11 @@ describe('routes : Project', () => {
 
     describe('GET /projects/:id', () => {
         it('should return project', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser.get('/projects/1');
                 expect(res.status).to.equal(200);
@@ -73,7 +85,11 @@ describe('routes : Project', () => {
             }
         });
         it('no auth', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await chai.request(server).get('/projects/1');
                 expect(res.status).to.equal(401);
@@ -183,7 +199,11 @@ describe('routes : Project', () => {
             }
         });
         it('no auth', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await chai
                     .request(server)
@@ -200,7 +220,11 @@ describe('routes : Project', () => {
 
     describe('PUT /projects/:id', () => {
         it('should update a project title', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser
                     .put('/projects/1')
@@ -215,7 +239,11 @@ describe('routes : Project', () => {
             }
         });
         it('should update a project details', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser
                     .put('/projects/1')
@@ -230,7 +258,11 @@ describe('routes : Project', () => {
             }
         });
         it('should update a project nothing', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser.put('/projects/1').send({});
                 const { title, details } = await Project.findByPk(1);
@@ -276,7 +308,11 @@ describe('routes : Project', () => {
             }
         });
         it('no auth', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await chai
                     .request(server)
@@ -293,7 +329,11 @@ describe('routes : Project', () => {
 
     describe('DELETE /projects/:id', () => {
         it('should delete a project', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 const project = await Project.findByPk(1);
@@ -313,7 +353,11 @@ describe('routes : Project', () => {
             }
         });
         it('should cacade delete a project and its tasks', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             await Task.create({ title: 'C', details: '', projectId: 1 });
             try {
                 const res = await authenticatedUser.delete('/projects/1');
@@ -327,7 +371,11 @@ describe('routes : Project', () => {
             }
         });
         it('no auth', async () => {
-            await Project.create({ title: 'Create character', details: 'just copy from internet' });
+            await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
             try {
                 const res = await chai.request(server).delete('/projects/1');
                 expect(res.status).to.equal(401);
