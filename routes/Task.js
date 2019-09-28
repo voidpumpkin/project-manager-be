@@ -2,6 +2,7 @@ const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, getById, create, update, destroy } = require('../services/Task');
 const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
+const { logCtxErr } = require('../utils');
 
 const router = Router();
 const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Task');
@@ -36,13 +37,7 @@ const routes = [
                     ctx.body = await getById(id, userId);
                     ctx.status = 200;
                 } catch (err) {
-                    const log =
-                        process.env.LOG_REQ === 'true'
-                            ? () => {
-                                  console.error('      err: ' + err.message);
-                              }
-                            : () => {};
-                    log();
+                    logCtxErr();
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -76,13 +71,7 @@ const routes = [
                     ctx.body = await create({ title, details, isDone, projectId, taskId }, userId);
                     ctx.status = 200;
                 } catch (err) {
-                    const log =
-                        process.env.LOG_REQ === 'true'
-                            ? () => {
-                                  console.error('      err: ' + err.message);
-                              }
-                            : () => {};
-                    log();
+                    logCtxErr();
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -116,13 +105,7 @@ const routes = [
                     await update({ id, title, details, isDone }, userId);
                     ctx.status = 204;
                 } catch (err) {
-                    const log =
-                        process.env.LOG_REQ === 'true'
-                            ? () => {
-                                  console.error('      err: ' + err.message);
-                              }
-                            : () => {};
-                    log();
+                    logCtxErr();
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -147,13 +130,7 @@ const routes = [
                     await destroy(id, userId);
                     ctx.status = 204;
                 } catch (err) {
-                    const log =
-                        process.env.LOG_REQ === 'true'
-                            ? () => {
-                                  console.error('      err: ' + err.message);
-                              }
-                            : () => {};
-                    log();
+                    logCtxErr();
                     ctx.body = err.message;
                     ctx.status = 400;
                 }

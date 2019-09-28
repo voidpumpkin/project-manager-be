@@ -10,3 +10,12 @@ exports.get = (value, path, defaultValue) => {
             return acc;
         }, value);
 };
+exports.logCtxErr = err => {
+    const log =
+        process.env.LOG_REQ === 'true'
+            ? () => {
+                  console.error('      err: ' + err.message);
+              }
+            : () => {};
+    log();
+};

@@ -5,6 +5,7 @@ const {
     removeParticipatorFromProject
 } = require('../services/ProjectParticipator');
 const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
+const { logCtxErr } = require('../utils');
 
 const router = Router();
 const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Project');
@@ -29,13 +30,7 @@ const routes = [
                     await addParticipatorToProject(id, participatorId, ctx.state.user);
                     ctx.status = 204;
                 } catch (err) {
-                    const log =
-                        process.env.LOG_REQ === 'true'
-                            ? () => {
-                                  console.error('      err: ' + err.message);
-                              }
-                            : () => {};
-                    log();
+                    logCtxErr();
                     ctx.status = 400;
                     ctx.body = err.message;
                 }
