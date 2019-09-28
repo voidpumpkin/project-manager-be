@@ -1,6 +1,5 @@
-const { Task } = require('../models');
+const { Task, Project } = require('../models');
 const { get } = require('../utils');
-const { getById: getProjectById } = require('../services/Project');
 const { isProjectParticipator } = require('./ProjectParticipator');
 
 exports.getAll = async () => {
@@ -12,7 +11,7 @@ exports.getById = async (id, userId) => {
     if (!task) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await getProjectById(task.projectId);
+    const project = await Project.findByPk(task.projectId);
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
@@ -21,19 +20,16 @@ exports.getById = async (id, userId) => {
 
 exports.create = async (task, userId) => {
     const { title, details, isDone = false, projectId, taskId: parentTaskId } = task;
-    const project = await getProjectById(projectId);
+    const project = await Project.findByPk(projectId);
     const parentTask = await Task.findByPk(parentTaskId);
     if (project === null) {
         throw Error(`parent project with id ${projectId} does not exist`);
-    } else {
-        if (!(await isProjectParticipator(project, userId))) {
-            throw Error('You are not part of that project!');
-        } else if (
-            parentTaskId &&
-            (parentTask === null || projectId !== get(parentTask, 'projectId'))
-        ) {
-            throw Error(`parent task with id ${parentTaskId} does not exist`);
-        }
+    }
+    if (!(await isProjectParticipator(project, userId))) {
+        throw Error('You are not part of that project!');
+    }
+    if (parentTaskId && (parentTask === null || projectId !== get(parentTask, 'projectId'))) {
+        throw Error(`parent task with id ${parentTaskId} does not exist`);
     }
     return await Task.create({ title, details, isDone, projectId, taskId: parentTaskId });
 };
@@ -44,7 +40,7 @@ exports.update = async (task, userId) => {
     if (!taskInstance) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await getProjectById(taskInstance.projectId);
+    const project = await Project.findByPk(taskInstance.projectId);
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
@@ -56,7 +52,7 @@ exports.destroy = async (id, userId) => {
     if (!task) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await getProjectById(task.projectId);
+    const project = await Project.findByPk(task.projectId);
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }

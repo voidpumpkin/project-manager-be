@@ -4,25 +4,25 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../server');
-const { sequelize, Task, Project, User, ProjectParticipator } = require('../../models');
+const { sequelize, Task, Project, User } = require('../../models');
 
 describe('business : Task', () => {
-    let authenticatedUser;
+    let authenticatedUser, authenticatedUserDBInst;
 
     beforeEach(async () => {
         await sequelize.sync({ force: true });
 
-        await User.create({
+        authenticatedUserDBInst = await User.create({
             username: 'test',
             password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
             isSystemAdmin: false
         });
-        await Project.create({
+        const project = await Project.create({
             title: 'Create character',
             details: 'just copy from internet',
             managerId: 1
         });
-        await ProjectParticipator.create({ projectId: 1, participatorId: 1 });
+        await project.addUser(authenticatedUserDBInst);
 
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -84,11 +84,12 @@ describe('business : Task', () => {
             }
         });
         it('task does not belong to the same project', async () => {
-            await Project.create({
+            const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await project.addUser(authenticatedUserDBInst);
             try {
                 const res = await authenticatedUser
                     .post('/tasks')

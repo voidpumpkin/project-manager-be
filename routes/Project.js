@@ -30,9 +30,22 @@ const routes = [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                ctx.body = await getById(id);
-                ctx.status = 200;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    ctx.body = await getById(id, userId);
+                    ctx.status = 200;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -56,9 +69,9 @@ const routes = [
             AllowOnlyAuthenticated,
             async ctx => {
                 try {
-                    const { id: creatorId } = ctx.state.user;
+                    const { id: userId } = ctx.state.user;
                     const { title, details, managerId } = ctx.request.body;
-                    ctx.body = await create({ title, details, managerId }, creatorId);
+                    ctx.body = await create({ title, details, managerId }, userId);
                     ctx.status = 200;
                 } catch (err) {
                     const log =
@@ -93,10 +106,23 @@ const routes = [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                const { title, details } = ctx.request.body;
-                await update({ id, title, details });
-                ctx.status = 204;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    const { title, details } = ctx.request.body;
+                    await update({ id, title, details }, userId);
+                    ctx.status = 204;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -112,9 +138,22 @@ const routes = [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                await destroy(id);
-                ctx.status = 204;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    await destroy(id, userId);
+                    ctx.status = 204;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     }

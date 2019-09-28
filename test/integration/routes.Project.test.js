@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../server');
-const { sequelize, Project, Task, User } = require('../../models');
+const { sequelize, Project, Task, User, ProjectParticipator } = require('../../models');
 
 describe('routes : Project', () => {
     let authenticatedUser;
@@ -64,6 +64,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
                 const res = await authenticatedUser.get('/projects/1');
                 expect(res.status).to.equal(200);
@@ -225,6 +226,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
                 const res = await authenticatedUser
                     .put('/projects/1')
@@ -244,6 +246,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
                 const res = await authenticatedUser
                     .put('/projects/1')
@@ -263,6 +266,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
                 const res = await authenticatedUser.put('/projects/1').send({});
                 const { title, details } = await Project.findByPk(1);
@@ -334,6 +338,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 const project = await Project.findByPk(1);
@@ -358,6 +363,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
+            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             await Task.create({ title: 'C', details: '', isDone: false, projectId: 1 });
             try {
                 const res = await authenticatedUser.delete('/projects/1');

@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 const server = require('../../server');
-const { sequelize, Task, Project, User } = require('../../models');
+const { sequelize, Task, Project, User, ProjectParticipator } = require('../../models');
 
 describe('routes : Task', () => {
     let authenticatedUser;
@@ -22,6 +22,7 @@ describe('routes : Task', () => {
             details: 'just copy from internet',
             managerId: 1
         });
+        await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
         await Task.create({
             title: 'Buy PC',
             details: 'from wallmart',
