@@ -45,7 +45,7 @@ describe('business : Task', () => {
     });
 
     describe('Create a Task', () => {
-        it('allow only self if you are in the project', async () => {
+        it('allow only self as manager if you are in the project', async () => {
             await User.create({ username: 't', password: '$', isSystemAdmin: false });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             try {
@@ -55,6 +55,22 @@ describe('business : Task', () => {
                 expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('You are not part of that project!');
+            } catch (err) {
+                throw err;
+            }
+        });
+        it('allow asignee only if it participates in project', async () => {
+            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            try {
+                const res = await authenticatedUser.post('/tasks').send({
+                    title: 'Buy PC',
+                    details: 'from wallmart',
+                    projectId: 1,
+                    assigneeId: 2
+                });
+                expect(res.status).to.equal(400);
+                expect(res.type).to.equal('text/plain');
+                expect(res.text).to.equal('Asignee must be a project participator');
             } catch (err) {
                 throw err;
             }
@@ -114,6 +130,20 @@ describe('business : Task', () => {
                 expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('You are not part of that project!');
+            } catch (err) {
+                throw err;
+            }
+        });
+        it('allow asignee only if it participates in project', async () => {
+            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await Task.create({ title: 'B', details: 'f', projectId: 1, isDone: false });
+            try {
+                const res = await authenticatedUser.put('/tasks/1').send({
+                    assigneeId: 2
+                });
+                expect(res.status).to.equal(400);
+                expect(res.type).to.equal('text/plain');
+                expect(res.text).to.equal('Asignee must be a project participator');
             } catch (err) {
                 throw err;
             }

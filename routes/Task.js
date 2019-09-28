@@ -59,7 +59,8 @@ const routes = [
                     .required(),
                 isDone: Joi.boolean(),
                 projectId: Joi.number().required(),
-                taskId: Joi.number()
+                taskId: Joi.number(),
+                assigneeId: Joi.number()
             }
         },
         handler: [
@@ -67,8 +68,18 @@ const routes = [
             async ctx => {
                 try {
                     const { id: userId } = ctx.state.user;
-                    const { title, details, isDone, projectId, taskId } = ctx.request.body;
-                    ctx.body = await create({ title, details, isDone, projectId, taskId }, userId);
+                    const {
+                        title,
+                        details,
+                        isDone,
+                        projectId,
+                        taskId,
+                        assigneeId
+                    } = ctx.request.body;
+                    ctx.body = await create(
+                        { title, details, isDone, projectId, taskId, assigneeId },
+                        userId
+                    );
                     ctx.status = 200;
                 } catch (err) {
                     logCtxErr();
@@ -91,7 +102,8 @@ const routes = [
                 details: Joi.string()
                     .allow('')
                     .max(255),
-                isDone: Joi.boolean()
+                isDone: Joi.boolean(),
+                assigneeId: Joi.number()
             }
         },
         handler: [
@@ -101,8 +113,8 @@ const routes = [
                 try {
                     const { id: userId } = ctx.state.user;
                     const { id } = ctx.params;
-                    const { title, details, isDone } = ctx.request.body;
-                    await update({ id, title, details, isDone }, userId);
+                    const { title, details, isDone, assigneeId } = ctx.request.body;
+                    await update({ id, title, details, isDone, assigneeId }, userId);
                     ctx.status = 204;
                 } catch (err) {
                     logCtxErr();

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     User.associate = models => {
-        const { Project, ProjectParticipator } = models;
+        const { Project, ProjectParticipator, Task } = models;
         //Is manager of
         User.hasMany(Project, {
             as: 'managedProject',
@@ -39,6 +39,17 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: {
                 name: 'participatorId',
                 allowNull: false,
+                references: {
+                    model: User,
+                    key: 'id'
+                }
+            }
+        });
+        //Can be assigned to
+        User.hasMany(Task, {
+            as: 'assignedTask',
+            foreignKey: {
+                name: 'assigneeId',
                 references: {
                     model: User,
                     key: 'id'
