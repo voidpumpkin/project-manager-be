@@ -1,7 +1,6 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, getById, create, update, destroy } = require('../services/Task');
-const { getById: getProjectById } = require('../services/Project');
 const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
 
 const router = Router();
@@ -31,9 +30,22 @@ const routes = [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                ctx.body = await getById(id);
-                ctx.status = 200;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    ctx.body = await getById(id, userId);
+                    ctx.status = 200;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -50,6 +62,7 @@ const routes = [
                     .allow('')
                     .max(255)
                     .required(),
+                isDone: Joi.boolean(),
                 projectId: Joi.number().required(),
                 taskId: Joi.number()
             }
@@ -57,18 +70,21 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-                const { title, details, projectId, taskId } = ctx.request.body;
-                const project = await getProjectById(projectId);
-                const task = await getById(taskId);
-                if (project === null) {
-                    ctx.body = `parent project with id ${projectId} does not exist`;
-                    ctx.status = 400;
-                } else if (task === null || projectId != task.projectId) {
-                    ctx.body = `parent task with id ${taskId} does not exist`;
-                    ctx.status = 400;
-                } else {
-                    ctx.body = await create({ title, details, projectId, taskId });
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { title, details, isDone, projectId, taskId } = ctx.request.body;
+                    ctx.body = await create({ title, details, isDone, projectId, taskId }, userId);
                     ctx.status = 200;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
                 }
             }
         ]
@@ -85,17 +101,31 @@ const routes = [
                 title: Joi.string().max(255),
                 details: Joi.string()
                     .allow('')
-                    .max(255)
+                    .max(255),
+                isDone: Joi.boolean()
             }
         },
         handler: [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                const { title, details, projectId, taskId } = ctx.request.body;
-                await update({ id, title, details, projectId, taskId });
-                ctx.status = 204;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    const { title, details, isDone } = ctx.request.body;
+                    await update({ id, title, details, isDone }, userId);
+                    ctx.status = 204;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -111,9 +141,22 @@ const routes = [
             AllowOnlyAuthenticated,
             AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                await destroy(id);
-                ctx.status = 204;
+                try {
+                    const { id: userId } = ctx.state.user;
+                    const { id } = ctx.params;
+                    await destroy(id, userId);
+                    ctx.status = 204;
+                } catch (err) {
+                    const log =
+                        process.env.LOG_REQ === 'true'
+                            ? () => {
+                                  console.error('      err: ' + err.message);
+                              }
+                            : () => {};
+                    log();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     }

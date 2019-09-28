@@ -358,7 +358,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await Task.create({ title: 'C', details: '', projectId: 1 });
+            await Task.create({ title: 'C', details: '', isDone: false, projectId: 1 });
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 const task = await Task.findByPk(1);

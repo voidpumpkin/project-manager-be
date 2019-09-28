@@ -22,15 +22,25 @@ describe('routes : Task', () => {
             details: 'just copy from internet',
             managerId: 1
         });
-        await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+        await Task.create({
+            title: 'Buy PC',
+            details: 'from wallmart',
+            isDone: false,
+            projectId: 1
+        });
 
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
     describe('GET /tasks', () => {
-        it('should return projects', async () => {
-            await Task.create({ title: 'Buy PC2', details: 'from wallmart2', projectId: 1 });
+        it('should return tasks', async () => {
+            await Task.create({
+                title: 'Buy PC2',
+                details: 'from wallmart2',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser.get('/tasks');
                 expect(res.status).to.equal(200);
@@ -62,7 +72,12 @@ describe('routes : Task', () => {
 
     describe('GET /tasks/:id', () => {
         it('should return task', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser.get('/tasks/2');
                 expect(res.status).to.equal(200);
@@ -86,7 +101,12 @@ describe('routes : Task', () => {
             }
         });
         it('no auth', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await chai.request(server).get('/tasks/2');
                 expect(res.status).to.equal(401);
@@ -115,47 +135,6 @@ describe('routes : Task', () => {
                 throw err;
             }
         });
-        it('task does not belong to the same project', async () => {
-            await Project.create({
-                title: 'Create character',
-                details: 'just copy from internet',
-                managerId: 1
-            });
-            try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2, taskId: 1 });
-                expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent task with id 1 does not exist');
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('parent project does not exist', async () => {
-            try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 20, taskId: 1 });
-                expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent project with id 20 does not exist');
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('parent task does not exist', async () => {
-            try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 11 });
-                expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent task with id 11 does not exist');
-            } catch (err) {
-                throw err;
-            }
-        });
         it('no auth', async () => {
             try {
                 const res = await chai
@@ -173,7 +152,12 @@ describe('routes : Task', () => {
 
     describe('PUT /tasks/:id', () => {
         it('should update task title', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser
                     .put('/tasks/2')
@@ -190,7 +174,12 @@ describe('routes : Task', () => {
             }
         });
         it('should update task details', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser
                     .put('/tasks/2')
@@ -219,7 +208,12 @@ describe('routes : Task', () => {
             }
         });
         it('"projectId" is not allowed', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser.put('/tasks/2').send({ projectId: 5 });
                 expect(res.status).to.equal(400);
@@ -230,7 +224,12 @@ describe('routes : Task', () => {
             }
         });
         it('"taskId" is not allowed', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser.put('/tasks/2').send({ taskId: 5 });
                 expect(res.status).to.equal(400);
@@ -241,7 +240,12 @@ describe('routes : Task', () => {
             }
         });
         it('no auth', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await chai
                     .request(server)
@@ -258,7 +262,12 @@ describe('routes : Task', () => {
 
     describe('DELETE /tasks/:id', () => {
         it('should delete a task', async () => {
-            await Task.create({ title: 'Buy PC', details: 'from wallmart', projectId: 1 });
+            await Task.create({
+                title: 'Buy PC',
+                details: 'from wallmart',
+                isDone: false,
+                projectId: 1
+            });
             try {
                 const res = await authenticatedUser.delete('/tasks/2');
                 const task = await Task.findByPk(2);
@@ -281,6 +290,7 @@ describe('routes : Task', () => {
             await Task.create({
                 title: 'Create character',
                 details: 'just copy from internet',
+                isDone: false,
                 projectId: 1,
                 taskId: 1
             });

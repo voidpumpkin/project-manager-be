@@ -19,3 +19,8 @@ exports.removeParticipatorFromProject = async (projectId, participatorId) => {
     const user = await getUserById(participatorId);
     return await project.removeUser(user);
 };
+
+exports.isProjectParticipator = async (projectInstance, userId) => {
+    const projectParticipator = await projectInstance.getUser({ where: { id: userId } });
+    return !!projectParticipator;
+};
