@@ -13,8 +13,15 @@ const routes = [
         handler: [
             AllowOnlyAuthenticated,
             async ctx => {
-                ctx.body = await getAll();
-                ctx.status = 200;
+                try {
+                    throw Error('this route is disabled');
+                    ctx.body = await getAll();
+                    ctx.status = 200;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -112,6 +119,7 @@ const routes = [
             AllowOnlyAuthenticated,
             async ctx => {
                 try {
+                    throw Error('this route is disabled');
                     const { id } = ctx.params;
                     await destroy(id);
                     ctx.status = 204;

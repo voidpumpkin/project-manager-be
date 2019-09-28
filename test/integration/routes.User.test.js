@@ -21,7 +21,7 @@ describe('routes : User', () => {
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
-    describe('GET /users', () => {
+    describe.skip('GET /users', () => {
         it('should return users', async () => {
             await User.create({ username: 'bob', password: 'jones', isSystemAdmin: false });
             try {
@@ -264,7 +264,7 @@ describe('routes : User', () => {
         });
     });
 
-    describe('DELETE /users/:id', () => {
+    describe.skip('DELETE /users/:id', () => {
         it('should delete a user', async () => {
             await User.create({ username: 'bob', password: 'jones', isSystemAdmin: false });
             try {

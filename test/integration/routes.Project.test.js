@@ -20,7 +20,7 @@ describe('routes : Project', () => {
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
-    describe('GET /projects', () => {
+    describe.skip('GET /projects', () => {
         it('should return projects', async () => {
             await Project.create({
                 title: 'Create character',
