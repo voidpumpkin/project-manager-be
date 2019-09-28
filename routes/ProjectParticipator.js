@@ -4,11 +4,10 @@ const {
     addParticipatorToProject,
     removeParticipatorFromProject
 } = require('../services/ProjectParticipator');
-const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
+const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
 const { logCtxErr } = require('../utils');
 
 const router = Router();
-const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Project');
 
 const routes = [
     {
@@ -22,7 +21,6 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
                 try {
                     const { id } = ctx.request.params;
@@ -48,11 +46,16 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
-                const { id, participatorId } = ctx.params;
-                await removeParticipatorFromProject(id, participatorId);
-                ctx.status = 204;
+                try {
+                    const { id, participatorId } = ctx.params;
+                    await removeParticipatorFromProject(id, participatorId);
+                    ctx.status = 204;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.status = 400;
+                    ctx.body = err.message;
+                }
             }
         ]
     }

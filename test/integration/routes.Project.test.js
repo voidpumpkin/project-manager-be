@@ -78,7 +78,7 @@ describe('routes : Project', () => {
         it('project does not exist', async () => {
             try {
                 const res = await authenticatedUser.get('/projects/1');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Project with id 1 does not exist');
             } catch (err) {
@@ -282,7 +282,7 @@ describe('routes : Project', () => {
                 const res = await authenticatedUser
                     .put('/projects/1')
                     .send({ title: 'just copy from pinterest' });
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Project with id 1 does not exist');
             } catch (err) {
@@ -351,7 +351,7 @@ describe('routes : Project', () => {
         it('should not delete a project', async () => {
             try {
                 const res = await authenticatedUser.delete('/projects/1');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.text).to.equal('Project with id 1 does not exist');
             } catch (err) {
                 throw err;

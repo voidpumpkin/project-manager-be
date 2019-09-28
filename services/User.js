@@ -12,30 +12,39 @@ exports.getAll = async () => {
 };
 
 exports.getById = async id => {
-    return await User.findByPk(id);
-};
-
-exports.getByAtr = async (atr, value) => {
-    if (!value) {
-        return null;
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw Error(`User with id ${id} does not exist`);
     }
-    return await User.findOne({ where: { [atr]: value } });
+    return user;
 };
 
 exports.create = async user => {
     const { username, password, isSystemAdmin = false } = user;
+    if (username && (await User.findOne({ where: { username } }))) {
+        throw Error('username already taken');
+    }
     const hashedPassword = await hashPassword(password);
     return await User.create({ username, password: hashedPassword, isSystemAdmin });
 };
 
 exports.update = async user => {
     const { id, username, password, isSystemAdmin } = user;
-    const projectInstance = await User.findByPk(id);
+    const userInstance = await User.findByPk(id);
+    if (!userInstance) {
+        throw Error(`User with id ${id} does not exist`);
+    }
+    if (username && (await User.findOne({ where: { username } }))) {
+        throw Error('username already taken');
+    }
     const hashedPassword = password ? await hashPassword(password) : undefined;
-    await projectInstance.update({ username, password: hashedPassword, isSystemAdmin });
+    await userInstance.update({ username, password: hashedPassword, isSystemAdmin });
 };
 
 exports.destroy = async id => {
-    const project = await User.findByPk(id);
-    await project.destroy();
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw Error(`User with id ${id} does not exist`);
+    }
+    await user.destroy();
 };

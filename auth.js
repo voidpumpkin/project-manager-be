@@ -1,7 +1,8 @@
 const passport = require('koa-passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
-const { getById, getByAtr } = require('./services/User');
+const { getById } = require('./services/User');
+const { User } = require('./models');
 
 //save id in cookie TODO: store session in memory
 passport.serializeUser((user, done) => {
@@ -21,7 +22,7 @@ passport.deserializeUser(async (id, done) => {
 passport.use(
     new LocalStrategy(async (username, password, done) => {
         try {
-            const user = await getByAtr('username', username);
+            const user = await User.findOne({ where: { username } });
             if (user) {
                 const isPasswordMatching = await bcrypt.compare(password, user.password);
                 if (isPasswordMatching) {

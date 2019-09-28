@@ -1,10 +1,10 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { getAll, getById, getByAtr, create, update, destroy } = require('../services/User');
-const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
+const { getAll, getById, create, update, destroy } = require('../services/User');
+const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
+const { logCtxErr } = require('../utils');
 
 const router = Router();
-const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('User');
 
 const routes = [
     {
@@ -28,11 +28,16 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                ctx.body = await getById(id);
-                ctx.status = 200;
+                try {
+                    const { id } = ctx.params;
+                    ctx.body = await getById(id);
+                    ctx.status = 200;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     },
@@ -53,13 +58,14 @@ const routes = [
         },
         handler: [
             async ctx => {
-                const { username, password, isSystemAdmin } = ctx.request.body;
-                if (await getByAtr('username', username)) {
-                    ctx.status = 409;
-                    ctx.body = 'username already taken';
-                } else {
+                try {
+                    const { username, password, isSystemAdmin } = ctx.request.body;
                     ctx.body = await create({ username, password, isSystemAdmin });
                     ctx.status = 200;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.body = err.message;
+                    ctx.status = 400;
                 }
             }
         ]
@@ -80,18 +86,16 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
-                const { id } = ctx.params;
-                //FIXME: Password more authentication
-                const { username, password, isSystemAdmin } = ctx.request.body;
-                const existingUser = await getByAtr('username', username);
-                if (existingUser) {
-                    ctx.status = 409;
-                    ctx.body = 'username already taken';
-                } else {
+                try {
+                    const { id } = ctx.params;
+                    const { username, password, isSystemAdmin } = ctx.request.body;
                     await update({ id, username, password, isSystemAdmin });
                     ctx.status = 204;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.body = err.message;
+                    ctx.status = 400;
                 }
             }
         ]
@@ -106,12 +110,16 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
-                //FIXME: Should only allow if is Manager of no projects
-                const { id } = ctx.params;
-                await destroy(id);
-                ctx.status = 204;
+                try {
+                    const { id } = ctx.params;
+                    await destroy(id);
+                    ctx.status = 204;
+                } catch (err) {
+                    logCtxErr();
+                    ctx.body = err.message;
+                    ctx.status = 400;
+                }
             }
         ]
     }

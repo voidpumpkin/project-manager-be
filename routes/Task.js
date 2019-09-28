@@ -1,11 +1,10 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, getById, create, update, destroy } = require('../services/Task');
-const { AllowOnlyAuthenticated, AllowOnlyWhenIdExistsFnMaker } = require('../utils/Middlewares');
+const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
 const { logCtxErr } = require('../utils');
 
 const router = Router();
-const AllowOnlyWhenIdExists = AllowOnlyWhenIdExistsFnMaker('Task');
 
 const routes = [
     {
@@ -29,7 +28,6 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
                 try {
                     const { id: userId } = ctx.state.user;
@@ -108,7 +106,6 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
                 try {
                     const { id: userId } = ctx.state.user;
@@ -134,7 +131,6 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
-            AllowOnlyWhenIdExists,
             async ctx => {
                 try {
                     const { id: userId } = ctx.state.user;

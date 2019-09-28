@@ -68,7 +68,7 @@ describe('routes : User', () => {
         it('user does not exist', async () => {
             try {
                 const res = await authenticatedUser.get('/users/2');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('User with id 2 does not exist');
             } catch (err) {
@@ -162,7 +162,7 @@ describe('routes : User', () => {
                     .request(server)
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(409);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('username already taken');
             } catch (err) {
@@ -191,7 +191,7 @@ describe('routes : User', () => {
                 const res = await authenticatedUser
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(409);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('username already taken');
             } catch (err) {
@@ -241,7 +241,7 @@ describe('routes : User', () => {
         it('User does not exist', async () => {
             try {
                 const res = await authenticatedUser.put('/users/2').send({ username: 'pinterest' });
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('User with id 2 does not exist');
             } catch (err) {
@@ -279,7 +279,7 @@ describe('routes : User', () => {
         it('should not delete a user', async () => {
             try {
                 const res = await authenticatedUser.delete('/users/2');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.text).to.equal('User with id 2 does not exist');
             } catch (err) {
                 throw err;

@@ -94,7 +94,7 @@ describe('routes : Task', () => {
         it('Task with does not exist', async () => {
             try {
                 const res = await authenticatedUser.get('/tasks/22');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Task with id 22 does not exist');
             } catch (err) {
@@ -201,7 +201,7 @@ describe('routes : Task', () => {
                 const res = await authenticatedUser
                     .put('/tasks/22')
                     .send({ details: 'from target' });
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Task with id 22 does not exist');
             } catch (err) {
@@ -281,7 +281,7 @@ describe('routes : Task', () => {
         it('Task with does not exist', async () => {
             try {
                 const res = await authenticatedUser.delete('/tasks/2');
-                expect(res.status).to.equal(422);
+                expect(res.status).to.equal(400);
                 expect(res.text).to.equal('Task with id 2 does not exist');
             } catch (err) {
                 throw err;
