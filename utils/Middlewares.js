@@ -7,10 +7,11 @@ exports.AllowOnlyAuthenticated = async (ctx, next) => {
     }
 };
 exports.AllowOnlyWhenIdExistsFnMaker = className => {
-    const { getById } = require(`../services/${className}`);
+    const { [className]: model } = require('../models');
     return async (ctx, next) => {
         const { id } = ctx.params;
-        if ((await getById(id)) === null) {
+        const instance = await model.findByPk(id);
+        if (instance === null) {
             ctx.body = `${className} with id ${id} does not exist`;
             ctx.status = 422;
         } else {
