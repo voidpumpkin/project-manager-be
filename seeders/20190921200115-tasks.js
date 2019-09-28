@@ -8,6 +8,7 @@ module.exports = {
                 {
                     title: 'Create character',
                     details: 'just copy from internet',
+                    isDone: false,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     projectId: 1
@@ -15,6 +16,7 @@ module.exports = {
                 {
                     title: 'Code something',
                     details: 'something',
+                    isDone: false,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     projectId: 1
@@ -22,6 +24,7 @@ module.exports = {
                 {
                     title: 'Create epic map',
                     details: 'no rly, steal from Epic',
+                    isDone: true,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     projectId: 1
