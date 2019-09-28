@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Project.associate = models => {
         const { Project, User, Task, ProjectParticipator } = models;
+        //Has tasks
         Project.hasMany(Task, { onDelete: 'CASCADE', foreignKey: { allowNull: false } });
         //Has participators
         Project.belongsToMany(User, {
@@ -24,6 +25,17 @@ module.exports = (sequelize, DataTypes) => {
                 name: 'projectId',
                 references: {
                     model: Project,
+                    key: 'id'
+                }
+            }
+        });
+        //Is managed by
+        Project.belongsTo(User, {
+            foreignKey: {
+                name: 'managerId',
+                allowNull: false,
+                references: {
+                    model: User,
                     key: 'id'
                 }
             }
