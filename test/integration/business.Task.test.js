@@ -22,7 +22,7 @@ describe('business : Task', () => {
             details: 'just copy from internet',
             managerId: 1
         });
-        await project.addUser(authenticatedUserDBInst);
+        await project.addParticipator(authenticatedUserDBInst);
 
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -89,7 +89,7 @@ describe('business : Task', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await project.addUser(authenticatedUserDBInst);
+            await project.addParticipator(authenticatedUserDBInst);
             try {
                 const res = await authenticatedUser
                     .post('/tasks')

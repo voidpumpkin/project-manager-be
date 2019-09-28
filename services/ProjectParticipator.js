@@ -6,7 +6,7 @@ exports.addParticipatorToProject = async (projectId, participatorId, userId) => 
         throw Error('Participators can be added only when you are the Project manager');
     }
     const user = await User.findByPk(participatorId);
-    const addedObject = await project.addUser(user);
+    const addedObject = await project.addParticipator(user);
     if (!addedObject) {
         throw Error('Wrong params or already exists');
     }

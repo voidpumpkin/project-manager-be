@@ -94,7 +94,7 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 2
             });
-            await project.addUser(authenticatedUserDBInst);
+            await project.addParticipator(authenticatedUserDBInst);
             try {
                 const res = await authenticatedUser.put('/projects/1').send({
                     title: 'hi'
@@ -128,7 +128,7 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 2
             });
-            await project.addUser(authenticatedUserDBInst);
+            await project.addParticipator(authenticatedUserDBInst);
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 expect(res.status).to.equal(400);

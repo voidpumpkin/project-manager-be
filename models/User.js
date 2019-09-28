@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         const { Project, ProjectParticipator } = models;
         //Is manager of
         User.hasMany(Project, {
+            as: 'managedProject',
             foreignKey: {
                 name: 'managerId',
                 allowNull: false,
@@ -30,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         });
         //Participates in
         User.belongsToMany(Project, {
+            as: 'project',
             through: {
                 model: ProjectParticipator,
                 unique: false

@@ -17,18 +17,9 @@ module.exports = (sequelize, DataTypes) => {
 
     Task.associate = models => {
         const { Task, Project } = models;
-        //Is task of
-        Task.belongsTo(Project, {
-            onDelete: 'CASCADE',
-            foreignKey: { allowNull: false, references: { model: 'tasks', key: 'id' } }
-        });
-        //Is subtask of
-        Task.belongsTo(Task, {
-            onDelete: 'CASCADE',
-            foreignKey: { references: { model: 'tasks', key: 'id' } }
-        });
         //Has substasks
         Task.hasMany(Task, {
+            as: 'subtask',
             onDelete: 'CASCADE',
             foreignKey: { references: { model: 'tasks', key: 'id' } }
         });
