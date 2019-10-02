@@ -37,6 +37,7 @@ const routes = [
             AllowOnlyAuthenticated,
             async ctx => {
                 try {
+                    throw Error('this route is disabled');
                     const { id } = ctx.params;
                     ctx.body = await getById(id);
                     ctx.status = 200;

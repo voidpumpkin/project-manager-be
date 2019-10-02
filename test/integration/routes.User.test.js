@@ -51,7 +51,7 @@ describe('routes : User', () => {
         });
     });
 
-    describe('GET /users/:id', () => {
+    describe.skip('GET /users/:id', () => {
         it('should return user', async () => {
             await User.create({ username: 'bob', password: 'jones', isSystemAdmin: false });
             try {
