@@ -28,7 +28,7 @@ const routes = [
                     await addParticipatorToProject(id, participatorId, ctx.state.user);
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.status = 400;
                     ctx.body = err.message;
                 }
@@ -52,7 +52,7 @@ const routes = [
                     await removeParticipatorFromProject(id, participatorId);
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.status = 400;
                     ctx.body = err.message;
                 }

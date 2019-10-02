@@ -18,7 +18,7 @@ const routes = [
                     ctx.body = await getAll();
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -41,7 +41,7 @@ const routes = [
                     ctx.body = await getById(id);
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -70,7 +70,7 @@ const routes = [
                     ctx.body = await create({ username, password, isSystemAdmin });
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -100,7 +100,7 @@ const routes = [
                     await update({ id, username, password, isSystemAdmin });
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -124,7 +124,7 @@ const routes = [
                     await destroy(id);
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }

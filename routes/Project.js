@@ -18,7 +18,7 @@ const routes = [
                     ctx.body = await getAll();
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -42,7 +42,7 @@ const routes = [
                     ctx.body = await getById(id, userId);
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -74,7 +74,7 @@ const routes = [
                     ctx.body = await create({ title, details, managerId }, userId);
                     ctx.status = 200;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -106,7 +106,7 @@ const routes = [
                     await update({ id, title, details }, userId);
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
@@ -130,7 +130,7 @@ const routes = [
                     await destroy(id, userId);
                     ctx.status = 204;
                 } catch (err) {
-                    logCtxErr();
+                    logCtxErr(err);
                     ctx.body = err.message;
                     ctx.status = 400;
                 }
