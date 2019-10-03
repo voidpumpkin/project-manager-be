@@ -1,6 +1,6 @@
 module.exports = {
     extends: ['voidpumpkin'],
     parserOptions: {
-        ecmaVersion: 8
+        ecmaVersion: 9
     }
 };
