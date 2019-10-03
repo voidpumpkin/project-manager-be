@@ -18,6 +18,12 @@ module.exports = {
                     updatedAt: new Date()
                 },
                 {
+                    projectId: 3,
+                    participatorId: 1,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
                     projectId: 1,
                     participatorId: 2,
                     createdAt: new Date(),
