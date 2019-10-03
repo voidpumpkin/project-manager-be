@@ -21,7 +21,8 @@ exports.addParticipatorToProject = async (projectId, participatorId, userId) => 
 
 exports.removeParticipatorFromProject = async (projectId, participatorId) => {
     const projectParticipator = ProjectParticipator.findOne({
-        where: { projectId, participatorId }
+        where: { projectId, participatorId },
+        raw: true
     });
     if (!projectParticipator) {
         throw Error('Participation does not exist');

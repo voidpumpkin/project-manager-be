@@ -22,7 +22,7 @@ passport.deserializeUser(async (id, done) => {
 passport.use(
     new LocalStrategy(async (username, password, done) => {
         try {
-            const user = await User.findOne({ where: { username } });
+            const user = await User.findOne({ where: { username }, raw: true });
             if (user) {
                 const isPasswordMatching = await bcrypt.compare(password, user.password);
                 if (isPasswordMatching) {

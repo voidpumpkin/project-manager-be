@@ -3,15 +3,15 @@ const { get } = require('../utils');
 const { isProjectParticipator } = require('./ProjectParticipator');
 
 exports.getAll = async () => {
-    return await Task.findAll();
+    return await Task.findAll({ raw: true });
 };
 
 exports.getById = async (id, userId) => {
-    const task = await Task.findByPk(id);
+    const task = await Task.findByPk(id, { raw: true });
     if (!task) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await Project.findByPk(task.projectId);
+    const project = await Project.findByPk(task.projectId, { raw: true });
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
@@ -20,8 +20,8 @@ exports.getById = async (id, userId) => {
 
 exports.create = async (task, userId) => {
     const { title, details, isDone = false, projectId, taskId: parentTaskId, assigneeId } = task;
-    const project = await Project.findByPk(projectId);
-    const parentTask = await Task.findByPk(parentTaskId);
+    const project = await Project.findByPk(projectId, { raw: true });
+    const parentTask = await Task.findByPk(parentTaskId, { raw: true });
     if (project === null) {
         throw Error(`parent project with id ${projectId} does not exist`);
     }
@@ -50,7 +50,7 @@ exports.update = async (task, userId) => {
     if (!taskInstance) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await Project.findByPk(taskInstance.projectId);
+    const project = await Project.findByPk(taskInstance.projectId, { raw: true });
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
@@ -65,7 +65,7 @@ exports.destroy = async (id, userId) => {
     if (!task) {
         throw Error(`Task with id ${id} does not exist`);
     }
-    const project = await Project.findByPk(task.projectId);
+    const project = await Project.findByPk(task.projectId, { raw: true });
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }

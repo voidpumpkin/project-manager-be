@@ -2,18 +2,18 @@ const { Project } = require('../models');
 const { isProjectParticipator } = require('./ProjectParticipator');
 
 exports.getAll = async () => {
-    return await Project.findAll();
+    return await Project.findAll({ raw: true });
 };
 
 exports.getById = async (id, userId) => {
-    const project = await Project.findByPk(id);
+    const project = await Project.findByPk(id, { raw: true });
     if (!project) {
         throw Error(`Project with id ${id} does not exist`);
     }
     if (!(await isProjectParticipator(project, userId))) {
         throw Error('You are not participating in this project');
     }
-    return await Project.findByPk(id);
+    return await Project.findByPk(id, { raw: true });
 };
 
 exports.create = async (project, userId) => {
