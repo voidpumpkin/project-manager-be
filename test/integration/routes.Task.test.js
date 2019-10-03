@@ -14,8 +14,7 @@ describe('routes : Task', () => {
 
         await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
-            isSystemAdmin: true
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
         });
         await Project.create({
             title: 'Create character',

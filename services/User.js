@@ -14,26 +14,29 @@ exports.getAll = async () => {
 };
 
 exports.getById = async id => {
+    const userInstance = await User.findByPk(id);
     const user = await User.findByPk(id, {
         raw: true
     });
     if (!user) {
         throw Error(`User with id ${id} does not exist`);
     }
-    return user;
+    const managedProjects = await userInstance.getManagedProject({ raw: true }).map(e => e.id);
+    const participatedProjects = await userInstance.getProject({ raw: true }).map(e => e.id);
+    return { ...user, participatedProjects, managedProjects };
 };
 
 exports.create = async user => {
-    const { username, password, isSystemAdmin } = user;
+    const { username, password } = user;
     if (username && (await User.findOne({ where: { username }, raw: true }))) {
         throw Error('username already taken');
     }
     const hashedPassword = await hashPassword(password);
-    return await User.create({ username, password: hashedPassword, isSystemAdmin });
+    return await User.create({ username, password: hashedPassword });
 };
 
 exports.update = async user => {
-    const { id, username, password, isSystemAdmin } = user;
+    const { id, username, password } = user;
     const userInstance = await User.findByPk(id);
     if (!userInstance) {
         throw Error(`User with id ${id} does not exist`);
@@ -42,7 +45,7 @@ exports.update = async user => {
         throw Error('username already taken');
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;
-    await userInstance.update({ username, password: hashedPassword, isSystemAdmin });
+    await userInstance.update({ username, password: hashedPassword });
 };
 
 exports.destroy = async id => {

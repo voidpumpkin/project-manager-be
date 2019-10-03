@@ -14,8 +14,7 @@ describe('business : Task', () => {
 
         authenticatedUserDBInst = await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
-            isSystemAdmin: false
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
         });
         const project = await Project.create({
             title: 'Create character',
@@ -30,7 +29,7 @@ describe('business : Task', () => {
 
     describe('Get a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {
@@ -46,7 +45,7 @@ describe('business : Task', () => {
 
     describe('Create a Task', () => {
         it('allow only self as manager if you are in the project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             try {
                 const res = await authenticatedUser
@@ -60,7 +59,7 @@ describe('business : Task', () => {
             }
         });
         it('allow asignee only if it participates in project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             try {
                 const res = await authenticatedUser.post('/tasks').send({
                     title: 'Buy PC',
@@ -120,7 +119,7 @@ describe('business : Task', () => {
     });
     describe('Edit a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {
@@ -135,7 +134,7 @@ describe('business : Task', () => {
             }
         });
         it('allow asignee only if it participates in project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             await Task.create({ title: 'B', details: 'f', projectId: 1, isDone: false });
             try {
                 const res = await authenticatedUser.put('/tasks/1').send({
@@ -151,7 +150,7 @@ describe('business : Task', () => {
     });
     describe('Delete a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$', isSystemAdmin: false });
+            await User.create({ username: 't', password: '$' });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {

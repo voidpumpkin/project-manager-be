@@ -13,8 +13,7 @@ describe('business : Project', () => {
         await sequelize.sync({ force: true });
         authenticatedUserDBInst = await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
-            isSystemAdmin: false
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
         });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -22,7 +21,7 @@ describe('business : Project', () => {
 
     describe('Get project', () => {
         it('allow only when you are participator', async () => {
-            await User.create({ username: 'a', password: 'a', isSystemAdmin: false });
+            await User.create({ username: 'a', password: 'a' });
             await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -40,7 +39,7 @@ describe('business : Project', () => {
 
     describe('Create a project', () => {
         it('allow only self as a manager', async () => {
-            await User.create({ username: 'a', password: 'a', isSystemAdmin: false });
+            await User.create({ username: 'a', password: 'a' });
             try {
                 const res = await authenticatedUser.post('/projects').send({
                     title: 'Create character',
@@ -88,7 +87,7 @@ describe('business : Project', () => {
             }
         });
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a', isSystemAdmin: false });
+            await User.create({ username: 'a', password: 'a' });
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -122,7 +121,7 @@ describe('business : Project', () => {
             }
         });
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a', isSystemAdmin: false });
+            await User.create({ username: 'a', password: 'a' });
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -140,7 +139,7 @@ describe('business : Project', () => {
     });
     describe('Add project participator', () => {
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a', isSystemAdmin: false });
+            await User.create({ username: 'a', password: 'a' });
             await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',

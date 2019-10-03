@@ -15,8 +15,7 @@ describe('routes : auth', () => {
         it('should succefully login', async () => {
             await User.create({
                 username: 'test',
-                password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
-                isSystemAdmin: true
+                password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
             });
             try {
                 const res = await chai
