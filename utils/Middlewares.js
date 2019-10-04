@@ -32,7 +32,12 @@ const OnError = async (ctx, next) => {
     }
 };
 
+const RouteDisabled = async () => {
+    throw Error('this route is disabled');
+};
+
 module.exports = {
     AllowOnlyAuthenticated,
-    OnError
+    OnError,
+    RouteDisabled
 };

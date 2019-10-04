@@ -8,10 +8,11 @@ const hashPassword = async password => {
     return await bcrypt.hash(password, salt);
 };
 
-exports.getAll = async () => {
-    return await User.findAll({
+const getUsersIds = async () => {
+    const users = await User.findAll({
         raw: true
     });
+    return users.map(e => e.id);
 };
 
 exports.getById = async id => {
@@ -56,3 +57,5 @@ exports.destroy = async id => {
     }
     await user.destroy();
 };
+
+module.exports.getUsersIds = getUsersIds;

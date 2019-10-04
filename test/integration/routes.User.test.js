@@ -20,18 +20,20 @@ describe('routes : User', () => {
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
-    describe.skip('GET /users', () => {
+    describe('GET /users', () => {
         it('should return users', async () => {
             await User.create({ username: 'bob', password: 'jones' });
             try {
                 const res = await authenticatedUser.get('/users');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body).to.have.length(2);
-                expect(res.body[0].username).to.equal('test');
-                expect(res.body[0].password).to.exist;
-                expect(res.body[1].username).to.equal('bob');
-                expect(res.body[1].password).to.exist;
+                expect(res.body.data).to.have.length(2);
+                expect(res.body.data[0].id).to.equal(1);
+                expect(res.body.data[0].type).to.equal('users');
+                expect(res.body.data[0].links.self).to.equal('/users/1');
+                expect(res.body.data[1].id).to.equal(2);
+                expect(res.body.data[1].type).to.equal('users');
+                expect(res.body.data[1].links.self).to.equal('/users/2');
             } catch (err) {
                 throw err;
             }
