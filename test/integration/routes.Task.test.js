@@ -62,8 +62,7 @@ describe('routes : Task', () => {
             try {
                 const res = await chai.request(server).get('/tasks');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -94,8 +93,7 @@ describe('routes : Task', () => {
             try {
                 const res = await authenticatedUser.get('/tasks/22');
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Task with id 22 does not exist');
+                expect(res.body.errors[0].title).to.equal('Task with id 22 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -110,8 +108,7 @@ describe('routes : Task', () => {
             try {
                 const res = await chai.request(server).get('/tasks/2');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -142,8 +139,7 @@ describe('routes : Task', () => {
                     .post('/tasks')
                     .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 });
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -201,8 +197,7 @@ describe('routes : Task', () => {
                     .put('/tasks/22')
                     .send({ details: 'from target' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Task with id 22 does not exist');
+                expect(res.body.errors[0].title).to.equal('Task with id 22 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -217,8 +212,7 @@ describe('routes : Task', () => {
             try {
                 const res = await authenticatedUser.put('/tasks/2').send({ projectId: 5 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('"projectId" is not allowed');
+                expect(res.body.errors[0].title).to.equal('"projectId" is not allowed');
             } catch (err) {
                 throw err;
             }
@@ -233,8 +227,7 @@ describe('routes : Task', () => {
             try {
                 const res = await authenticatedUser.put('/tasks/2').send({ taskId: 5 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('"taskId" is not allowed');
+                expect(res.body.errors[0].title).to.equal('"taskId" is not allowed');
             } catch (err) {
                 throw err;
             }
@@ -252,8 +245,7 @@ describe('routes : Task', () => {
                     .put('/tasks/2')
                     .send({ title: 'Buy better PC' });
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -281,7 +273,7 @@ describe('routes : Task', () => {
             try {
                 const res = await authenticatedUser.delete('/tasks/2');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('Task with id 2 does not exist');
+                expect(res.body.errors[0].title).to.equal('Task with id 2 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -309,8 +301,7 @@ describe('routes : Task', () => {
             try {
                 const res = await chai.request(server).delete('/tasks/2');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }

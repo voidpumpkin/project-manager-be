@@ -30,7 +30,9 @@ describe('business : Project', () => {
             try {
                 const res = await authenticatedUser.get('/projects/1');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('You are not participating in this project');
+                expect(res.body.errors[0].title).to.equal(
+                    'You are not participating in this project'
+                );
             } catch (err) {
                 throw err;
             }
@@ -49,7 +51,9 @@ describe('business : Project', () => {
             try {
                 const res = await authenticatedUser.get('/projects/1/participators');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('You are not participating in this project');
+                expect(res.body.errors[0].title).to.equal(
+                    'You are not participating in this project'
+                );
             } catch (err) {
                 throw err;
             }
@@ -66,7 +70,7 @@ describe('business : Project', () => {
                     managerId: 2
                 });
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('Manager can only be set as yourself');
+                expect(res.body.errors[0].title).to.equal('Manager can only be set as yourself');
             } catch (err) {
                 throw err;
             }
@@ -100,7 +104,9 @@ describe('business : Project', () => {
                     title: 'hi'
                 });
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('You are not participating in this project');
+                expect(res.body.errors[0].title).to.equal(
+                    'You are not participating in this project'
+                );
             } catch (err) {
                 throw err;
             }
@@ -118,7 +124,9 @@ describe('business : Project', () => {
                     title: 'hi'
                 });
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('Projects can be edited only by project managers');
+                expect(res.body.errors[0].title).to.equal(
+                    'Projects can be edited only by project managers'
+                );
             } catch (err) {
                 throw err;
             }
@@ -134,7 +142,9 @@ describe('business : Project', () => {
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('You are not participating in this project');
+                expect(res.body.errors[0].title).to.equal(
+                    'You are not participating in this project'
+                );
             } catch (err) {
                 throw err;
             }
@@ -150,7 +160,9 @@ describe('business : Project', () => {
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('Projects can be deleted only by project managers');
+                expect(res.body.errors[0].title).to.equal(
+                    'Projects can be deleted only by project managers'
+                );
             } catch (err) {
                 throw err;
             }
@@ -169,7 +181,7 @@ describe('business : Project', () => {
                     participatorId: 1
                 });
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal(
+                expect(res.body.errors[0].title).to.equal(
                     'Participators can be added only when you are the Project manager'
                 );
             } catch (err) {

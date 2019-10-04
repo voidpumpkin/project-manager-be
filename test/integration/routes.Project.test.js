@@ -48,8 +48,7 @@ describe('routes : Project', () => {
             try {
                 const res = await chai.request(server).get('/projects');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -78,8 +77,7 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.get('/projects/1');
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Project with id 1 does not exist');
+                expect(res.body.errors[0].title).to.equal('Project with id 1 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -93,8 +91,7 @@ describe('routes : Project', () => {
             try {
                 const res = await chai.request(server).get('/projects/1');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -138,8 +135,9 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.post('/projects').send({});
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('child "title" fails because ["title" is required]');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "title" fails because ["title" is required]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -148,8 +146,9 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.post('/projects').send({ title: null });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('child "title" fails because ["title" must be a string]');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "title" fails because ["title" must be a string]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -158,8 +157,7 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.post('/projects').send({ title: '' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal(
+                expect(res.body.errors[0].title).to.equal(
                     'child "title" fails because ["title" is not allowed to be empty]'
                 );
             } catch (err) {
@@ -172,8 +170,7 @@ describe('routes : Project', () => {
                     .post('/projects')
                     .send({ title: 'a', details: null });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal(
+                expect(res.body.errors[0].title).to.equal(
                     'child "details" fails because ["details" must be a string]'
                 );
             } catch (err) {
@@ -186,8 +183,7 @@ describe('routes : Project', () => {
                     .post('/projects')
                     .send({ projectId: 1, title: 'a', details: '' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('"projectId" is not allowed');
+                expect(res.body.errors[0].title).to.equal('"projectId" is not allowed');
             } catch (err) {
                 throw err;
             }
@@ -198,8 +194,7 @@ describe('routes : Project', () => {
                     .post('/projects')
                     .send({ createdAt: new Date(), title: 'a', details: '' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('"createdAt" is not allowed');
+                expect(res.body.errors[0].title).to.equal('"createdAt" is not allowed');
             } catch (err) {
                 throw err;
             }
@@ -210,8 +205,7 @@ describe('routes : Project', () => {
                     .post('/projects')
                     .send({ updatedAt: new Date(), title: 'a', details: '' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('"updatedAt" is not allowed');
+                expect(res.body.errors[0].title).to.equal('"updatedAt" is not allowed');
             } catch (err) {
                 throw err;
             }
@@ -228,8 +222,7 @@ describe('routes : Project', () => {
                     .post('/projects')
                     .send({ title: 'Create character', details: 'just copy from internet' });
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -300,8 +293,7 @@ describe('routes : Project', () => {
                     .put('/projects/1')
                     .send({ title: 'just copy from pinterest' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Project with id 1 does not exist');
+                expect(res.body.errors[0].title).to.equal('Project with id 1 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -310,8 +302,10 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.put('/projects/1').send({ title: null });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('child "title" fails because ["title" must be a string]');
+
+                expect(res.body.errors[0].title).to.equal(
+                    'child "title" fails because ["title" must be a string]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -320,8 +314,7 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.put('/projects/1').send({ title: '' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal(
+                expect(res.body.errors[0].title).to.equal(
                     'child "title" fails because ["title" is not allowed to be empty]'
                 );
             } catch (err) {
@@ -340,8 +333,7 @@ describe('routes : Project', () => {
                     .put('/projects/1')
                     .send({ details: 'just copy from pinterest' });
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -387,7 +379,7 @@ describe('routes : Project', () => {
             try {
                 const res = await authenticatedUser.delete('/projects/1');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('Project with id 1 does not exist');
+                expect(res.body.errors[0].title).to.equal('Project with id 1 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -420,8 +412,7 @@ describe('routes : Project', () => {
             try {
                 const res = await chai.request(server).delete('/projects/1');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }

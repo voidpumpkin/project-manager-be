@@ -39,7 +39,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -65,7 +66,8 @@ const routes = [
                 password: Joi.string()
                     .max(255)
                     .required()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             OnError,
@@ -87,7 +89,8 @@ const routes = [
             body: {
                 username: Joi.string().max(255),
                 password: Joi.string().max(255)
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -111,7 +114,8 @@ const routes = [
             body: {
                 username: Joi.string().max(255),
                 password: Joi.string().max(255)
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -131,7 +135,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,

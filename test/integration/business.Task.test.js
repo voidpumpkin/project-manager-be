@@ -35,8 +35,7 @@ describe('business : Task', () => {
             try {
                 const res = await authenticatedUser.get('/tasks/1');
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('You are not part of that project!');
+                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
                 throw err;
             }
@@ -52,8 +51,7 @@ describe('business : Task', () => {
                     .post('/tasks')
                     .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('You are not part of that project!');
+                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
                 throw err;
             }
@@ -68,8 +66,7 @@ describe('business : Task', () => {
                     assigneeId: 2
                 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Asignee must be a project participator');
+                expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
             } catch (err) {
                 throw err;
             }
@@ -80,8 +77,9 @@ describe('business : Task', () => {
                     .post('/tasks')
                     .send({ title: 'Buy PC', details: 'from wallmart', projectId: 20, taskId: 1 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent project with id 20 does not exist');
+                expect(res.body.errors[0].title).to.equal(
+                    'parent project with id 20 does not exist'
+                );
             } catch (err) {
                 throw err;
             }
@@ -92,8 +90,7 @@ describe('business : Task', () => {
                     .post('/tasks')
                     .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 11 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent task with id 11 does not exist');
+                expect(res.body.errors[0].title).to.equal('parent task with id 11 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -110,8 +107,7 @@ describe('business : Task', () => {
                     .post('/tasks')
                     .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2, taskId: 1 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('parent task with id 1 does not exist');
+                expect(res.body.errors[0].title).to.equal('parent task with id 1 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -127,8 +123,7 @@ describe('business : Task', () => {
                     .put('/tasks/1')
                     .send({ title: 'Buy better PC' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('You are not part of that project!');
+                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
                 throw err;
             }
@@ -141,8 +136,7 @@ describe('business : Task', () => {
                     assigneeId: 2
                 });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Asignee must be a project participator');
+                expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
             } catch (err) {
                 throw err;
             }
@@ -156,8 +150,7 @@ describe('business : Task', () => {
             try {
                 const res = await authenticatedUser.delete('/tasks/1');
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('You are not part of that project!');
+                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
                 throw err;
             }

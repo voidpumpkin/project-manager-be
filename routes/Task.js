@@ -25,7 +25,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -55,7 +56,8 @@ const routes = [
                 projectId: Joi.number().required(),
                 taskId: Joi.number(),
                 assigneeId: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -86,7 +88,8 @@ const routes = [
                     .max(255),
                 isDone: Joi.boolean(),
                 assigneeId: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -106,7 +109,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,

@@ -34,7 +34,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -53,7 +54,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -80,7 +82,8 @@ const routes = [
                     .max(255)
                     .required(),
                 managerId: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -100,7 +103,8 @@ const routes = [
             type: 'json',
             body: {
                 participatorId: Joi.number().required()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -126,7 +130,8 @@ const routes = [
                 details: Joi.string()
                     .allow('')
                     .max(255)
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -147,7 +152,8 @@ const routes = [
             params: {
                 id: Joi.number().required(),
                 participatorId: Joi.number().required()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,
@@ -165,7 +171,8 @@ const routes = [
         validate: {
             params: {
                 id: Joi.number()
-            }
+            },
+            continueOnError: true
         },
         handler: [
             AllowOnlyAuthenticated,

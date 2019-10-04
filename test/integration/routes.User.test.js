@@ -40,8 +40,7 @@ describe('routes : User', () => {
             try {
                 const res = await chai.request(server).get('/users');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -65,8 +64,7 @@ describe('routes : User', () => {
             try {
                 const res = await authenticatedUser.get('/users/2');
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('User with id 2 does not exist');
+                expect(res.body.errors[0].title).to.equal('User with id 2 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -76,8 +74,7 @@ describe('routes : User', () => {
             try {
                 const res = await chai.request(server).get('/users/2');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -157,8 +154,7 @@ describe('routes : User', () => {
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('username already taken');
+                expect(res.body.errors[0].title).to.equal('username already taken');
             } catch (err) {
                 throw err;
             }
@@ -185,8 +181,8 @@ describe('routes : User', () => {
                     .post('/users')
                     .send({ username: 'bob', password: 'jones' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('username already taken');
+
+                expect(res.body.errors[0].title).to.equal('username already taken');
             } catch (err) {
                 throw err;
             }
@@ -232,8 +228,7 @@ describe('routes : User', () => {
             try {
                 const res = await authenticatedUser.put('/users/2').send({ username: 'pinterest' });
                 expect(res.status).to.equal(400);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('User with id 2 does not exist');
+                expect(res.body.errors[0].title).to.equal('User with id 2 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -246,8 +241,7 @@ describe('routes : User', () => {
                     .put('/users/1')
                     .send({ username: 'pinterest' });
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
@@ -270,7 +264,7 @@ describe('routes : User', () => {
             try {
                 const res = await authenticatedUser.delete('/users/2');
                 expect(res.status).to.equal(400);
-                expect(res.text).to.equal('User with id 2 does not exist');
+                expect(res.body.errors[0].title).to.equal('User with id 2 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -280,8 +274,7 @@ describe('routes : User', () => {
             try {
                 const res = await chai.request(server).delete('/users/2');
                 expect(res.status).to.equal(401);
-                expect(res.type).to.equal('text/plain');
-                expect(res.text).to.equal('Unauthorized');
+                expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
                 throw err;
             }
