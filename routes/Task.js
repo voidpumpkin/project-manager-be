@@ -1,8 +1,7 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
 const { getAll, getById, create, update, destroy } = require('../services/Task');
-const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
-const { logCtxErr } = require('../utils');
+const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 
 const router = Router();
 
@@ -12,16 +11,11 @@ const routes = [
         path: '/tasks',
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    ctx.body = await getAll();
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                ctx.body = await getAll();
+                ctx.status = 200;
             }
         ]
     },
@@ -35,17 +29,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    ctx.body = await getById(id, userId);
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                ctx.body = await getById(id, userId);
+                ctx.status = 200;
             }
         ]
     },
@@ -70,27 +59,15 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const {
-                        title,
-                        details,
-                        isDone,
-                        projectId,
-                        taskId,
-                        assigneeId
-                    } = ctx.request.body;
-                    ctx.body = await create(
-                        { title, details, isDone, projectId, taskId, assigneeId },
-                        userId
-                    );
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { title, details, isDone, projectId, taskId, assigneeId } = ctx.request.body;
+                ctx.body = await create(
+                    { title, details, isDone, projectId, taskId, assigneeId },
+                    userId
+                );
+                ctx.status = 200;
             }
         ]
     },
@@ -113,18 +90,13 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    const { title, details, isDone, assigneeId } = ctx.request.body;
-                    await update({ id, title, details, isDone, assigneeId }, userId);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                const { title, details, isDone, assigneeId } = ctx.request.body;
+                await update({ id, title, details, isDone, assigneeId }, userId);
+                ctx.status = 204;
             }
         ]
     },
@@ -138,17 +110,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    await destroy(id, userId);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                await destroy(id, userId);
+                ctx.status = 204;
             }
         ]
     }

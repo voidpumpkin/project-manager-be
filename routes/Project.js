@@ -10,8 +10,7 @@ const {
     removeParticipator,
     getParticipatorsIds
 } = require('../services/Project');
-const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
-const { logCtxErr } = require('../utils');
+const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 
 const router = Router();
 
@@ -21,16 +20,11 @@ const routes = [
         path: '/projects',
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    ctx.body = await getAll();
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                ctx.body = await getAll();
+                ctx.status = 200;
             }
         ]
     },
@@ -44,17 +38,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    ctx.body = { ids: await getParticipatorsIds(id, userId) };
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                ctx.body = { ids: await getParticipatorsIds(id, userId) };
+                ctx.status = 200;
             }
         ]
     },
@@ -68,17 +57,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    ctx.body = await getById(id, userId);
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                ctx.body = await getById(id, userId);
+                ctx.status = 200;
             }
         ]
     },
@@ -100,17 +84,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { title, details, managerId } = ctx.request.body;
-                    ctx.body = await create({ title, details, managerId }, userId);
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { title, details, managerId } = ctx.request.body;
+                ctx.body = await create({ title, details, managerId }, userId);
+                ctx.status = 200;
             }
         ]
     },
@@ -125,17 +104,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id } = ctx.request.params;
-                    const { participatorId } = ctx.request.body;
-                    await addParticipator(id, participatorId, ctx.state.user);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.status = 400;
-                    ctx.body = err.message;
-                }
+                const { id } = ctx.request.params;
+                const { participatorId } = ctx.request.body;
+                await addParticipator(id, participatorId, ctx.state.user);
+                ctx.status = 204;
             }
         ]
     },
@@ -156,18 +130,13 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    const { title, details } = ctx.request.body;
-                    await update({ id, title, details }, userId);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                const { title, details } = ctx.request.body;
+                await update({ id, title, details }, userId);
+                ctx.status = 204;
             }
         ]
     },
@@ -182,16 +151,11 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id, participatorId } = ctx.params;
-                    await removeParticipator(id, participatorId);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.status = 400;
-                    ctx.body = err.message;
-                }
+                const { id, participatorId } = ctx.params;
+                await removeParticipator(id, participatorId);
+                ctx.status = 204;
             }
         ]
     },
@@ -205,17 +169,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id: userId } = ctx.state.user;
-                    const { id } = ctx.params;
-                    await destroy(id, userId);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id: userId } = ctx.state.user;
+                const { id } = ctx.params;
+                await destroy(id, userId);
+                ctx.status = 204;
             }
         ]
     }

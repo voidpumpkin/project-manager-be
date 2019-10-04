@@ -1,8 +1,7 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
 const { getAll, getById, create, update, destroy } = require('../services/User');
-const { AllowOnlyAuthenticated } = require('../utils/Middlewares');
-const { logCtxErr } = require('../utils');
+const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 
 const router = Router();
 
@@ -12,16 +11,11 @@ const routes = [
         path: '/users',
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    ctx.body = await getAll();
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                ctx.body = await getAll();
+                ctx.status = 200;
             }
         ]
     },
@@ -30,17 +24,12 @@ const routes = [
         path: '/users/me',
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id } = ctx.state.user;
-                    const user = await getById(id);
-                    ctx.body = { ...user };
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id } = ctx.state.user;
+                const user = await getById(id);
+                ctx.body = { ...user };
+                ctx.status = 200;
             }
         ]
     },
@@ -54,17 +43,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    const { id } = ctx.params;
-                    ctx.body = await getById(id);
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                const { id } = ctx.params;
+                ctx.body = await getById(id);
+                ctx.status = 200;
             }
         ]
     },
@@ -84,16 +68,11 @@ const routes = [
             }
         },
         handler: [
+            OnError,
             async ctx => {
-                try {
-                    const { username, password } = ctx.request.body;
-                    ctx.body = await create({ username, password });
-                    ctx.status = 200;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { username, password } = ctx.request.body;
+                ctx.body = await create({ username, password });
+                ctx.status = 200;
             }
         ]
     },
@@ -112,17 +91,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    const { id } = ctx.state.user;
-                    const { username, password } = ctx.request.body;
-                    await update({ id, username, password });
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                const { id } = ctx.state.user;
+                const { username, password } = ctx.request.body;
+                await update({ id, username, password });
+                ctx.status = 204;
             }
         ]
     },
@@ -141,18 +115,13 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    const { id } = ctx.params;
-                    const { username, password } = ctx.request.body;
-                    await update({ id, username, password });
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                const { id } = ctx.params;
+                const { username, password } = ctx.request.body;
+                await update({ id, username, password });
+                ctx.status = 204;
             }
         ]
     },
@@ -166,17 +135,12 @@ const routes = [
         },
         handler: [
             AllowOnlyAuthenticated,
+            OnError,
             async ctx => {
-                try {
-                    throw Error('this route is disabled');
-                    const { id } = ctx.params;
-                    await destroy(id);
-                    ctx.status = 204;
-                } catch (err) {
-                    logCtxErr(err);
-                    ctx.body = err.message;
-                    ctx.status = 400;
-                }
+                throw Error('this route is disabled');
+                const { id } = ctx.params;
+                await destroy(id);
+                ctx.status = 204;
             }
         ]
     }
