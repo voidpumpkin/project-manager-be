@@ -7,11 +7,11 @@ const server = require('../../server');
 const { sequelize, Project, Task, User, ProjectParticipator } = require('../../models');
 
 describe('routes : Project', () => {
-    let authenticatedUser;
+    let authenticatedUser, authenticatedUserDBInst;
 
     beforeEach(async () => {
         await sequelize.sync({ force: true });
-        await User.create({
+        authenticatedUserDBInst = await User.create({
             username: 'test',
             password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
         });
@@ -95,6 +95,24 @@ describe('routes : Project', () => {
                 expect(res.status).to.equal(401);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Unauthorized');
+            } catch (err) {
+                throw err;
+            }
+        });
+    });
+    describe('GET /projects/:id.participators', () => {
+        it('should return participator ids', async () => {
+            const project = await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
+            await project.addParticipator(authenticatedUserDBInst);
+            try {
+                const res = await authenticatedUser.get('/projects/1/participators');
+                expect(res.status).to.equal(200);
+                expect(res.type).to.equal('application/json');
+                expect(res.body.ids).to.be.an('array');
             } catch (err) {
                 throw err;
             }
@@ -324,6 +342,24 @@ describe('routes : Project', () => {
                 expect(res.status).to.equal(401);
                 expect(res.type).to.equal('text/plain');
                 expect(res.text).to.equal('Unauthorized');
+            } catch (err) {
+                throw err;
+            }
+        });
+    });
+    describe('PUT /projects/:id.participators', () => {
+        it('should add participators', async () => {
+            const project = await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 1
+            });
+            await project.addParticipator(authenticatedUserDBInst);
+            try {
+                const res = await authenticatedUser.get('/projects/1/participators');
+                expect(res.status).to.equal(200);
+                expect(res.type).to.equal('application/json');
+                expect(res.body.ids).to.be.an('array');
             } catch (err) {
                 throw err;
             }

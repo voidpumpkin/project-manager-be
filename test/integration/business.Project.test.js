@@ -37,6 +37,25 @@ describe('business : Project', () => {
         });
     });
 
+    describe('Get participators of a project', () => {
+        it('allow only when you are project participator', async () => {
+            const user = await User.create({ username: 'a', password: 'a' });
+            const project = await Project.create({
+                title: 'Create character',
+                details: 'just copy from internet',
+                managerId: 2
+            });
+            await project.addParticipator(user);
+            try {
+                const res = await authenticatedUser.get('/projects/1/participators');
+                expect(res.status).to.equal(400);
+                expect(res.text).to.equal('You are not participating in this project');
+            } catch (err) {
+                throw err;
+            }
+        });
+    });
+
     describe('Create a project', () => {
         it('allow only self as a manager', async () => {
             await User.create({ username: 'a', password: 'a' });

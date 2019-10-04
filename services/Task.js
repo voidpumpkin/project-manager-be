@@ -1,6 +1,6 @@
 const { Task, Project } = require('../models');
 const { get } = require('../utils');
-const { isProjectParticipator } = require('./ProjectParticipator');
+const { isParticipator } = require('./Project');
 
 exports.getAll = async () => {
     return await Task.findAll({ raw: true });
@@ -12,7 +12,7 @@ exports.getById = async (id, userId) => {
         throw Error(`Task with id ${id} does not exist`);
     }
     const project = await Project.findByPk(task.projectId, { raw: true });
-    if (!(await isProjectParticipator(project, userId))) {
+    if (!(await isParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
     return task;
@@ -25,13 +25,13 @@ exports.create = async (task, userId) => {
     if (project === null) {
         throw Error(`parent project with id ${projectId} does not exist`);
     }
-    if (!(await isProjectParticipator(project, userId))) {
+    if (!(await isParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
     if (parentTaskId && (parentTask === null || projectId !== get(parentTask, 'projectId'))) {
         throw Error(`parent task with id ${parentTaskId} does not exist`);
     }
-    if (assigneeId && !(await isProjectParticipator(project, assigneeId))) {
+    if (assigneeId && !(await isParticipator(project, assigneeId))) {
         throw Error('Asignee must be a project participator');
     }
     return await Task.create({
@@ -51,10 +51,10 @@ exports.update = async (task, userId) => {
         throw Error(`Task with id ${id} does not exist`);
     }
     const project = await Project.findByPk(taskInstance.projectId, { raw: true });
-    if (!(await isProjectParticipator(project, userId))) {
+    if (!(await isParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
-    if (assigneeId && !(await isProjectParticipator(project, assigneeId))) {
+    if (assigneeId && !(await isParticipator(project, assigneeId))) {
         throw Error('Asignee must be a project participator');
     }
     await taskInstance.update({ title, details, isDone, assigneeId });
@@ -66,7 +66,7 @@ exports.destroy = async (id, userId) => {
         throw Error(`Task with id ${id} does not exist`);
     }
     const project = await Project.findByPk(task.projectId, { raw: true });
-    if (!(await isProjectParticipator(project, userId))) {
+    if (!(await isParticipator(project, userId))) {
         throw Error('You are not part of that project!');
     }
     await task.destroy();
