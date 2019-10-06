@@ -60,6 +60,12 @@ const addParticipator = async ctx => {
     ctx.status = 204;
 };
 
+const removeParticipator = async ctx => {
+    const { id, participatorId } = ctx.params;
+    await removeParticipator(id, participatorId);
+    ctx.status = 204;
+};
+
 const getTasks = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
@@ -79,5 +85,6 @@ module.exports = {
     patch,
     getParticipators,
     addParticipator,
+    removeParticipator,
     getTasks
 };

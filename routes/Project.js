@@ -127,7 +127,7 @@ const routes = [
     },
     {
         method: 'delete',
-        path: '/projects/:id/participators/:participatorId',
+        path: '/projects/:id/relationships/participators/:participatorId',
         validate: {
             params: {
                 id: Joi.number().required(),
@@ -135,15 +135,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id, participatorId } = ctx.params;
-                await removeParticipator(id, participatorId);
-                ctx.status = 204;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.removeParticipator]
     },
     {
         method: 'delete',
