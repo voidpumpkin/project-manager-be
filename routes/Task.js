@@ -1,7 +1,8 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
-const { getById, create, update, destroy } = require('../services/Task');
+const { create, update, destroy } = require('../services/Task');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
+const taskController = require('../controllers/Task');
 
 const router = Router();
 
@@ -15,16 +16,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { id } = ctx.params;
-                ctx.body = await getById(id, userId);
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, taskController.get]
     },
     {
         method: 'post',

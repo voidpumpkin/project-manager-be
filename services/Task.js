@@ -3,7 +3,7 @@ const { get } = require('../utils');
 const { isParticipator } = require('./Project');
 const { BusinessRuleError } = require('../errors/BusinessRuleError');
 
-exports.getById = async (id, userId) => {
+const getById = async (id, userId) => {
     const task = await Task.findByPk(id, { raw: true });
     if (!task) {
         throw new BusinessRuleError(`Task with id ${id} does not exist`);
@@ -68,3 +68,5 @@ exports.destroy = async (id, userId) => {
     }
     await task.destroy();
 };
+
+exports.getById = getById;

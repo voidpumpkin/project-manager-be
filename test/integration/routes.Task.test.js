@@ -45,10 +45,10 @@ describe('routes : Task', () => {
                 const res = await authenticatedUser.get('/tasks/2');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.title).to.equal('Buy PC');
-                expect(res.body.details).to.equal('from wallmart');
-                expect(res.body.projectId).to.equal(1);
-                expect(res.body.taskId).to.equal(null);
+                expect(res.body.data.attributes.title).to.equal('Buy PC');
+                expect(res.body.data.attributes.details).to.equal('from wallmart');
+                expect(res.body.relationships.project.id).to.equal(1);
+                expect(res.body.relationships.task).to.equal(null);
             } catch (err) {
                 throw err;
             }
