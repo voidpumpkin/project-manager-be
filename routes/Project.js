@@ -17,23 +17,25 @@ const router = Router();
 const routes = [
     {
         method: 'get',
-        path: '/projects/:id/participators',
+        path: '/projects/:id/relationships/participators',
         validate: {
             params: {
                 id: Joi.number()
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { id } = ctx.params;
-                ctx.body = { ids: await getParticipatorsIds(id, userId) };
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.getParticipators]
+    },
+    {
+        method: 'get',
+        path: '/projects/:id/relationships/tasks',
+        validate: {
+            params: {
+                id: Joi.number()
+            },
+            continueOnError: true
+        },
+        handler: [AllowOnlyAuthenticated, OnError, userController.getTasks]
     },
     {
         method: 'get',

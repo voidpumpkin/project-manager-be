@@ -49,7 +49,7 @@ describe('business : Project', () => {
             });
             await project.addParticipator(user);
             try {
-                const res = await authenticatedUser.get('/projects/1/participators');
+                const res = await authenticatedUser.get('/projects/1/relationships/participators');
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
                     'You are not participating in this project'

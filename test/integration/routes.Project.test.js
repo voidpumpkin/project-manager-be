@@ -31,8 +31,8 @@ describe('routes : Project', () => {
                 const res = await authenticatedUser.get('/projects/1');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.title).to.equal('Create character');
-                expect(res.body.details).to.equal('just copy from internet');
+                expect(res.body.data.attributes.title).to.equal('Create character');
+                expect(res.body.data.attributes.details).to.equal('just copy from internet');
             } catch (err) {
                 throw err;
             }
@@ -61,8 +61,8 @@ describe('routes : Project', () => {
             }
         });
     });
-    describe('GET /projects/:id.participators', () => {
-        it('should return participator ids', async () => {
+    describe('GET /projects/:id/relationships/participators', () => {
+        it('should return participator relationships', async () => {
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -70,10 +70,10 @@ describe('routes : Project', () => {
             });
             await project.addParticipator(authenticatedUserDBInst);
             try {
-                const res = await authenticatedUser.get('/projects/1/participators');
+                const res = await authenticatedUser.get('/projects/1/relationships/participators');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.ids).to.be.an('array');
+                expect(res.body.data).to.be.an('array');
             } catch (err) {
                 throw err;
             }
@@ -303,7 +303,7 @@ describe('routes : Project', () => {
             }
         });
     });
-    describe('PUT /projects/:id.participators', () => {
+    describe('PUT /projects/:id/participators', () => {
         it('should add participators', async () => {
             const project = await Project.create({
                 title: 'Create character',
@@ -312,7 +312,7 @@ describe('routes : Project', () => {
             });
             await project.addParticipator(authenticatedUserDBInst);
             try {
-                const res = await authenticatedUser.get('/projects/1/participators');
+                const res = await authenticatedUser.put('/projects/1/participators');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
                 expect(res.body.ids).to.be.an('array');
