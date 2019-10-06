@@ -40,7 +40,7 @@ const patch = async ctx => {
 const destroy = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
-    await destroy(id, userId);
+    await projectService.destroy(id, userId);
     ctx.status = 204;
 };
 
@@ -66,7 +66,7 @@ const addParticipator = async ctx => {
 
 const removeParticipator = async ctx => {
     const { id, participatorId } = ctx.params;
-    await removeParticipator(id, participatorId);
+    await projectService.removeParticipator(id, participatorId);
     ctx.status = 204;
 };
 
