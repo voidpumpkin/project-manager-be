@@ -1,4 +1,5 @@
 const projectService = require('../services/Project');
+const { get: getUtil } = require('../utils');
 
 const parseProjectResponse = project => {
     const { managerId, taskIds, id, ...attributes } = project;
@@ -19,6 +20,15 @@ const get = async ctx => {
     const { id } = ctx.params;
     ctx.body = parseProjectResponse(await projectService.getById(id, userId));
     ctx.status = 200;
+};
+
+const post = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { title, details } = ctx.request.body.data.attributes;
+    const managerId = getUtil(ctx, 'request.body.relationships.manager.id');
+    const { id } = await projectService.create({ title, details, managerId }, userId);
+    ctx.body = parseProjectResponse(await projectService.getById(id, userId));
+    ctx.status = 201;
 };
 
 const getParticipators = async ctx => {
@@ -45,4 +55,4 @@ const getTasks = async ctx => {
     ctx.status = 200;
 };
 
-module.exports = { parseProjectResponse, get, getParticipators, getTasks };
+module.exports = { parseProjectResponse, get, post, getParticipators, getTasks };

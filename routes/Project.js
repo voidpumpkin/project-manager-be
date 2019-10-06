@@ -1,14 +1,6 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const {
-    getById,
-    create,
-    update,
-    destroy,
-    addParticipator,
-    removeParticipator,
-    getParticipatorsIds
-} = require('../services/Project');
+const { update, destroy, removeParticipator } = require('../services/Project');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const userController = require('../controllers/Project');
 
@@ -54,48 +46,32 @@ const routes = [
         validate: {
             type: 'json',
             body: {
-                title: Joi.string()
-                    .max(255)
-                    .required(),
-                details: Joi.string()
-                    .allow('')
-                    .max(255)
-                    .required(),
-                managerId: Joi.number()
+                data: {
+                    type: Joi.string()
+                        .valid('projects')
+                        .required(),
+                    attributes: {
+                        title: Joi.string()
+                            .max(255)
+                            .required(),
+                        details: Joi.string()
+                            .allow('')
+                            .max(255)
+                            .required()
+                    }
+                },
+                relationships: Joi.object({
+                    manager: {
+                        type: Joi.string()
+                            .valid('users')
+                            .required(),
+                        id: Joi.number().required()
+                    }
+                })
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { title, details, managerId } = ctx.request.body;
-                ctx.body = await create({ title, details, managerId }, userId);
-                ctx.status = 200;
-            }
-        ]
-    },
-    {
-        method: 'post',
-        path: '/projects/:id/participators',
-        validate: {
-            type: 'json',
-            body: {
-                participatorId: Joi.number().required()
-            },
-            continueOnError: true
-        },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id } = ctx.request.params;
-                const { participatorId } = ctx.request.body;
-                await addParticipator(id, participatorId, ctx.state.user);
-                ctx.status = 204;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.post]
     },
     {
         method: 'put',

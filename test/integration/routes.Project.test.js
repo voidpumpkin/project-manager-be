@@ -83,24 +83,32 @@ describe('routes : Project', () => {
     describe('POST /projects', () => {
         it('should return a project', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/projects')
-                    .send({ title: 'Create character', details: 'just copy from internet' });
-                expect(res.status).to.equal(200);
+                const res = await authenticatedUser.post('/projects').send({
+                    data: {
+                        type: 'projects',
+                        attributes: {
+                            title: 'Create character',
+                            details: 'just copy from internet'
+                        }
+                    }
+                });
+                expect(res.status).to.equal(201);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(1);
-                expect(res.body.title).to.equal('Create character');
-                expect(res.body.details).to.equal('just copy from internet');
+                expect(res.body.data.id).to.equal(1);
+                expect(res.body.data.attributes.title).to.equal('Create character');
+                expect(res.body.data.attributes.details).to.equal('just copy from internet');
             } catch (err) {
                 throw err;
             }
         });
         it('title" is required', async () => {
             try {
-                const res = await authenticatedUser.post('/projects').send({});
+                const res = await authenticatedUser
+                    .post('/projects')
+                    .send({ data: { type: 'projects', attributes: {} } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
-                    'child "title" fails because ["title" is required]'
+                    'child "data" fails because [child "attributes" fails because [child "title" fails because ["title" is required]]]'
                 );
             } catch (err) {
                 throw err;
@@ -108,10 +116,12 @@ describe('routes : Project', () => {
         });
         it('"title" must be a string', async () => {
             try {
-                const res = await authenticatedUser.post('/projects').send({ title: null });
+                const res = await authenticatedUser
+                    .post('/projects')
+                    .send({ data: { type: 'projects', attributes: { title: null } } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
-                    'child "title" fails because ["title" must be a string]'
+                    'child "data" fails because [child "attributes" fails because [child "title" fails because ["title" must be a string]]]'
                 );
             } catch (err) {
                 throw err;
@@ -119,10 +129,12 @@ describe('routes : Project', () => {
         });
         it('"title" is not allowed to be empty', async () => {
             try {
-                const res = await authenticatedUser.post('/projects').send({ title: '' });
+                const res = await authenticatedUser
+                    .post('/projects')
+                    .send({ data: { type: 'projects', attributes: { title: '' } } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
-                    'child "title" fails because ["title" is not allowed to be empty]'
+                    'child "data" fails because [child "attributes" fails because [child "title" fails because ["title" is not allowed to be empty]]]'
                 );
             } catch (err) {
                 throw err;
@@ -130,12 +142,12 @@ describe('routes : Project', () => {
         });
         it('"details" must be a string', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/projects')
-                    .send({ title: 'a', details: null });
+                const res = await authenticatedUser.post('/projects').send({
+                    data: { type: 'projects', attributes: { title: 'a', details: null } }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
-                    'child "details" fails because ["details" must be a string]'
+                    'child "data" fails because [child "attributes" fails because [child "details" fails because ["details" must be a string]]]'
                 );
             } catch (err) {
                 throw err;
@@ -143,33 +155,48 @@ describe('routes : Project', () => {
         });
         it('"projectId" is not allowed', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/projects')
-                    .send({ projectId: 1, title: 'a', details: '' });
+                const res = await authenticatedUser.post('/projects').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { projectId: 1, title: 'a', details: '' }
+                    }
+                });
                 expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('"projectId" is not allowed');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "data" fails because [child "attributes" fails because ["projectId" is not allowed]]'
+                );
             } catch (err) {
                 throw err;
             }
         });
         it('"createdAt" is not allowed', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/projects')
-                    .send({ createdAt: new Date(), title: 'a', details: '' });
+                const res = await authenticatedUser.post('/projects').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { createdAt: new Date(), title: 'a', details: '' }
+                    }
+                });
                 expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('"createdAt" is not allowed');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "data" fails because [child "attributes" fails because ["createdAt" is not allowed]]'
+                );
             } catch (err) {
                 throw err;
             }
         });
         it('"updatedAt" is not allowed', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/projects')
-                    .send({ updatedAt: new Date(), title: 'a', details: '' });
+                const res = await authenticatedUser.post('/projects').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { updatedAt: new Date(), title: 'a', details: '' }
+                    }
+                });
                 expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('"updatedAt" is not allowed');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "data" fails because [child "attributes" fails because ["updatedAt" is not allowed]]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -184,7 +211,15 @@ describe('routes : Project', () => {
                 const res = await chai
                     .request(server)
                     .post('/projects')
-                    .send({ title: 'Create character', details: 'just copy from internet' });
+                    .send({
+                        data: {
+                            type: 'projects',
+                            attributes: {
+                                title: 'Create character',
+                                details: 'just copy from internet'
+                            }
+                        }
+                    });
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {

@@ -65,9 +65,19 @@ describe('business : Project', () => {
             await User.create({ username: 'a', password: 'a' });
             try {
                 const res = await authenticatedUser.post('/projects').send({
-                    title: 'Create character',
-                    details: 'just copy from internet',
-                    managerId: 2
+                    data: {
+                        type: 'projects',
+                        attributes: {
+                            title: 'Create character',
+                            details: 'just copy from internet'
+                        }
+                    },
+                    relationships: {
+                        manager: {
+                            type: 'users',
+                            id: 2
+                        }
+                    }
                 });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('Manager can only be set as yourself');
@@ -78,14 +88,19 @@ describe('business : Project', () => {
         it('automaticly add myself as a paticipator', async () => {
             try {
                 const res = await authenticatedUser.post('/projects').send({
-                    title: 'Create character',
-                    details: 'just copy from internet'
+                    data: {
+                        type: 'projects',
+                        attributes: {
+                            title: 'Create character',
+                            details: 'just copy from internet'
+                        }
+                    }
                 });
                 const projectParticipator = await ProjectParticipator.findOne({
                     where: { projectId: 1, participatorId: 1 }
                 });
                 expect(projectParticipator).to.be.not.null;
-                expect(res.status).to.equal(200);
+                expect(res.status).to.equal(201);
             } catch (err) {
                 throw err;
             }
