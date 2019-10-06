@@ -4,9 +4,6 @@ const { get: getUtil } = require('../utils');
 const parseProjectResponse = project => {
     const { managerId, taskIds, id, ...attributes } = project;
     const manager = { links: { self: `/users/${managerId}` }, type: 'users', id: managerId };
-    // const tasks = taskIds.map(id => {
-    //     return { links: { self: `/tasks/${id}` }, type: 'tasks', id };
-    // });
     const tasks = { links: { self: `/projects/${id}/relationships/tasks` } };
     const participators = { links: { self: `/projects/${id}/relationships/participators` } };
     const links = { self: `/projects/${id}` };
