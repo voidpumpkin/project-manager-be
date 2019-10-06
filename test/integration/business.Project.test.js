@@ -115,8 +115,13 @@ describe('business : Project', () => {
                 managerId: 1
             });
             try {
-                const res = await authenticatedUser.put('/projects/1').send({
-                    title: 'hi'
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: {
+                            title: 'hi'
+                        }
+                    }
                 });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
@@ -135,8 +140,13 @@ describe('business : Project', () => {
             });
             await project.addParticipator(authenticatedUserDBInst);
             try {
-                const res = await authenticatedUser.put('/projects/1').send({
-                    title: 'hi'
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: {
+                            title: 'hi'
+                        }
+                    }
                 });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(

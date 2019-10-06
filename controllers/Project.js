@@ -31,6 +31,15 @@ const post = async ctx => {
     ctx.status = 201;
 };
 
+const patch = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    const { title, details } = getUtil(ctx, 'request.body.data.attributes');
+    const managerId = getUtil(ctx, 'request.body.relationships.manager.id');
+    await projectService.update({ id, title, details, managerId }, userId);
+    ctx.status = 204;
+};
+
 const getParticipators = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
@@ -55,4 +64,4 @@ const getTasks = async ctx => {
     ctx.status = 200;
 };
 
-module.exports = { parseProjectResponse, get, post, getParticipators, getTasks };
+module.exports = { parseProjectResponse, get, post, patch, getParticipators, getTasks };

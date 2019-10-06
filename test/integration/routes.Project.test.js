@@ -228,7 +228,7 @@ describe('routes : Project', () => {
         });
     });
 
-    describe('PUT /projects/:id', () => {
+    describe('PATCH /projects/:id', () => {
         it('should update a project title', async () => {
             await Project.create({
                 title: 'Create character',
@@ -237,9 +237,12 @@ describe('routes : Project', () => {
             });
             await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
-                const res = await authenticatedUser
-                    .put('/projects/1')
-                    .send({ title: 'Draw character' });
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { title: 'Draw character' }
+                    }
+                });
                 const { id, title, details } = await Project.findByPk(1);
                 expect(res.status).to.equal(204);
                 expect(id).to.equal(1);
@@ -257,9 +260,12 @@ describe('routes : Project', () => {
             });
             await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
-                const res = await authenticatedUser
-                    .put('/projects/1')
-                    .send({ details: 'just copy from pinterest' });
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { details: 'just copy from pinterest' }
+                    }
+                });
                 const { id, title, details } = await Project.findByPk(1);
                 expect(res.status).to.equal(204);
                 expect(id).to.equal(1);
@@ -277,7 +283,12 @@ describe('routes : Project', () => {
             });
             await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
             try {
-                const res = await authenticatedUser.put('/projects/1').send({});
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: {}
+                    }
+                });
                 const { title, details } = await Project.findByPk(1);
                 expect(res.status).to.equal(204);
                 expect(title).to.equal('Create character');
@@ -288,34 +299,14 @@ describe('routes : Project', () => {
         });
         it('Project does not exist', async () => {
             try {
-                const res = await authenticatedUser
-                    .put('/projects/1')
-                    .send({ title: 'just copy from pinterest' });
+                const res = await authenticatedUser.patch('/projects/1').send({
+                    data: {
+                        type: 'projects',
+                        attributes: { title: 'just copy from pinterest' }
+                    }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('Project with id 1 does not exist');
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('"title" must be a string', async () => {
-            try {
-                const res = await authenticatedUser.put('/projects/1').send({ title: null });
-                expect(res.status).to.equal(400);
-
-                expect(res.body.errors[0].title).to.equal(
-                    'child "title" fails because ["title" must be a string]'
-                );
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('"title" is not allowed to be empty', async () => {
-            try {
-                const res = await authenticatedUser.put('/projects/1').send({ title: '' });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'child "title" fails because ["title" is not allowed to be empty]'
-                );
             } catch (err) {
                 throw err;
             }
@@ -329,8 +320,13 @@ describe('routes : Project', () => {
             try {
                 const res = await chai
                     .request(server)
-                    .put('/projects/1')
-                    .send({ details: 'just copy from pinterest' });
+                    .patch('/projects/1')
+                    .send({
+                        data: {
+                            type: 'projects',
+                            attributes: { details: 'just copy from pinterest' }
+                        }
+                    });
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {
@@ -338,7 +334,7 @@ describe('routes : Project', () => {
             }
         });
     });
-    describe('PUT /projects/:id/participators', () => {
+    describe('PATCH /projects/:id/participators', () => {
         it('should add participators', async () => {
             const project = await Project.create({
                 title: 'Create character',
@@ -347,7 +343,7 @@ describe('routes : Project', () => {
             });
             await project.addParticipator(authenticatedUserDBInst);
             try {
-                const res = await authenticatedUser.put('/projects/1/participators');
+                const res = await authenticatedUser.patch('/projects/1/participators');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
                 expect(res.body.ids).to.be.an('array');

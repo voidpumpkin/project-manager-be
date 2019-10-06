@@ -78,7 +78,7 @@ const create = async (project, userId) => {
 };
 
 const update = async (project, userId) => {
-    const { id, title, details } = project;
+    const { id, title, details, managerId } = project;
     const projectInstance = await Project.findByPk(id);
     if (!projectInstance) {
         throw new BusinessRuleError(`Project with id ${id} does not exist`);
@@ -89,7 +89,10 @@ const update = async (project, userId) => {
     if (projectInstance.managerId !== userId) {
         throw new BusinessRuleError('Projects can be edited only by project managers');
     }
-    await projectInstance.update({ title, details });
+    if (managerId && (await isParticipator(projectInstance, managerId))) {
+        throw new BusinessRuleError('Only participating users can become managers');
+    }
+    await projectInstance.update({ title, details, managerId });
 };
 
 const removeParticipator = async (projectId, participatorId) => {
