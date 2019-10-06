@@ -8,10 +8,6 @@ const isParticipator = async (projectInstance, userId) => {
     return !!projectParticipator;
 };
 
-const getAll = async () => {
-    return await Project.findAll({ raw: true });
-};
-
 const getParticipators = async (id, userId) => {
     const project = await Project.findByPk(id);
     if (!project) {
@@ -122,7 +118,6 @@ const destroy = async (id, userId) => {
 };
 
 module.exports = {
-    getAll,
     getById,
     create,
     update,

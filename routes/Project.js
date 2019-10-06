@@ -1,7 +1,6 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
 const {
-    getAll,
     getById,
     create,
     update,
@@ -15,19 +14,6 @@ const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const router = Router();
 
 const routes = [
-    {
-        method: 'get',
-        path: '/projects',
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                throw Error('this route is disabled');
-                ctx.body = await getAll();
-                ctx.status = 200;
-            }
-        ]
-    },
     {
         method: 'get',
         path: '/projects/:id/participators',

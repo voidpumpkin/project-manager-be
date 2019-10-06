@@ -19,42 +19,6 @@ describe('routes : Project', () => {
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
-    describe.skip('GET /projects', () => {
-        it('should return projects', async () => {
-            await Project.create({
-                title: 'Create character',
-                details: 'just copy from internet',
-                managerId: 1
-            });
-            await Project.create({
-                title: 'Create characte2',
-                details: 'just copy from interne2',
-                managerId: 1
-            });
-            try {
-                const res = await authenticatedUser.get('/projects');
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body).to.have.length(2);
-                expect(res.body[0].title).to.equal('Create character');
-                expect(res.body[0].details).to.equal('just copy from internet');
-                expect(res.body[1].title).to.equal('Create characte2');
-                expect(res.body[1].details).to.equal('just copy from interne2');
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('no auth', async () => {
-            try {
-                const res = await chai.request(server).get('/projects');
-                expect(res.status).to.equal(401);
-                expect(res.body.errors[0].title).to.equal('Unauthorized');
-            } catch (err) {
-                throw err;
-            }
-        });
-    });
-
     describe('GET /projects/:id', () => {
         it('should return project', async () => {
             await Project.create({
