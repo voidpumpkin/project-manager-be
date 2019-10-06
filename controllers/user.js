@@ -9,7 +9,7 @@ const parseUserResponse = user => {
         return { links: { self: `/project/${id}` }, type: 'project', id };
     });
     const links = { self: `/users/${id}` };
-    const data = { type: 'user', id, attributes };
+    const data = { type: 'users', id, attributes };
     const relationships = { managedProjects, participatedProjects };
     return { links, data, relationships };
 };
@@ -34,7 +34,7 @@ const get = async ctx => {
     const { username } = await userService.getById(id);
     const links = { self: `/users/${id}` };
     const data = {
-        type: 'user',
+        type: 'users',
         id,
         attributes: { username }
     };
