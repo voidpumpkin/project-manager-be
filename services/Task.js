@@ -69,4 +69,21 @@ const destroy = async (id, userId) => {
     await task.destroy();
 };
 
-module.exports = { getById, create, update, destroy };
+const getSubTasks = async (id, userId) => {
+    const taskInstance = await Task.findByPk(id);
+    if (!taskInstance) {
+        throw new BusinessRuleError(`Task with id ${id} does not exist`);
+    }
+    const projectRawInstance = await Project.findByPk(taskInstance.projectId, { raw: true });
+    if (!(await isParticipator(projectRawInstance, userId))) {
+        throw new BusinessRuleError('You are not part of that project!');
+    }
+    return await taskInstance.getSubtask();
+};
+
+const getSubTaskIds = async (id, userId) => {
+    const subTasks = await getSubTasks(id, userId);
+    return subTasks.map(e => e.id);
+};
+
+module.exports = { getById, create, update, destroy, getSubTasks, getSubTaskIds };

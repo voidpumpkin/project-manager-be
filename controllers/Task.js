@@ -58,4 +58,16 @@ const destroy = async ctx => {
     ctx.status = 204;
 };
 
-module.exports = { get, post, patch, destroy };
+const getSubTasks = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    const links = { self: `/tasks/${id}/relationships/subtasks` };
+    const subTaskIds = await taskService.getSubTaskIds(id, userId);
+    const data = subTaskIds.map(id => {
+        return { links: { self: `/tasks/${id}` }, type: 'tasks', id };
+    });
+    ctx.body = { links, data };
+    ctx.status = 200;
+};
+
+module.exports = { get, post, patch, destroy, getSubTasks };

@@ -8,6 +8,17 @@ const router = Router();
 const routes = [
     {
         method: 'get',
+        path: '/tasks/:id/relationships/subtasks',
+        validate: {
+            params: {
+                id: Joi.number()
+            },
+            continueOnError: true
+        },
+        handler: [AllowOnlyAuthenticated, OnError, taskController.getSubTasks]
+    },
+    {
+        method: 'get',
         path: '/tasks/:id',
         validate: {
             params: {
