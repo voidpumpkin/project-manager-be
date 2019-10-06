@@ -1,6 +1,5 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { update, destroy } = require('../services/User');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const userController = require('../controllers/User');
 
@@ -74,23 +73,8 @@ const routes = [
     },
     {
         method: 'delete',
-        path: '/users/:id',
-        validate: {
-            params: {
-                id: Joi.number()
-            },
-            continueOnError: true
-        },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                throw Error('this route is disabled');
-                const { id } = ctx.params;
-                await destroy(id);
-                ctx.status = 204;
-            }
-        ]
+        path: '/users/me',
+        handler: [AllowOnlyAuthenticated, OnError, userController.destoyMe]
     }
 ];
 

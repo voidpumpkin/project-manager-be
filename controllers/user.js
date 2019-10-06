@@ -57,4 +57,10 @@ const patchMe = async ctx => {
     ctx.status = 204;
 };
 
-module.exports = { parseUserResponse, getAll, getMe, get, post, patchMe };
+const destoyMe = async ctx => {
+    const { id } = ctx.state.user;
+    await userService.destroy(id);
+    ctx.status = 204;
+};
+
+module.exports = { parseUserResponse, getAll, getMe, get, post, patchMe, destoyMe };

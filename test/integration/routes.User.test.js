@@ -215,11 +215,10 @@ describe('routes : User', () => {
         });
     });
 
-    describe.skip('DELETE /users/:id', () => {
+    describe('DELETE /users/me', () => {
         it('should delete a user', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await authenticatedUser.delete('/users/1');
+                const res = await authenticatedUser.delete('/users/me');
                 const user = await User.findByPk(1);
                 expect(res.status).to.equal(204);
                 expect(user).to.equal(null);
@@ -227,19 +226,9 @@ describe('routes : User', () => {
                 throw err;
             }
         });
-        it('should not delete a user', async () => {
-            try {
-                const res = await authenticatedUser.delete('/users/2');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('User with id 2 does not exist');
-            } catch (err) {
-                throw err;
-            }
-        });
         it('no auth', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await chai.request(server).delete('/users/2');
+                const res = await chai.request(server).delete('/users/me');
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {

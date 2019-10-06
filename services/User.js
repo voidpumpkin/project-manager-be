@@ -48,7 +48,7 @@ const update = async user => {
     await userInstance.update({ username, password: hashedPassword });
 };
 
-exports.destroy = async id => {
+const destroy = async id => {
     const user = await userModel.findByPk(id);
     if (!user) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
@@ -56,7 +56,4 @@ exports.destroy = async id => {
     await user.destroy();
 };
 
-module.exports.getAllIds = getAllIds;
-module.exports.getById = getById;
-module.exports.create = create;
-module.exports.update = update;
+module.exports = { hashPassword, getAllIds, getById, create, update, destroy };
