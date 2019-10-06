@@ -2,7 +2,7 @@ const projectService = require('../services/Project');
 
 const parseProjectResponse = project => {
     const { managerId, taskIds, id, ...attributes } = project;
-    const manager = { links: { self: `/users/${id}` }, type: 'users', id: managerId };
+    const manager = { links: { self: `/users/${managerId}` }, type: 'users', id: managerId };
     // const tasks = taskIds.map(id => {
     //     return { links: { self: `/tasks/${id}` }, type: 'tasks', id };
     // });
