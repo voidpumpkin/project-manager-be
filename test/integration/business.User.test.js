@@ -25,10 +25,10 @@ describe('business : User', () => {
                 const res = await authenticatedUser.get('/users/me');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.username).to.equal('test');
-                expect(res.body.password).to.exist;
-                expect(res.body.managedProjects).to.be.an('array');
-                expect(res.body.participatedProjects).to.be.an('array');
+                expect(res.body.data.attributes.username).to.equal('test');
+                expect(res.body.data.attributes.password).to.exist;
+                expect(res.body.relationships.managedProjects).to.be.an('array');
+                expect(res.body.relationships.participatedProjects).to.be.an('array');
             } catch (err) {
                 throw err;
             }

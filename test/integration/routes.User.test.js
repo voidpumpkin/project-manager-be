@@ -49,15 +49,14 @@ describe('routes : User', () => {
         });
     });
 
-    describe.skip('GET /users/:id', () => {
+    describe('GET /users/:id', () => {
         it('should return user', async () => {
             await User.create({ username: 'bob', password: 'jones' });
             try {
                 const res = await authenticatedUser.get('/users/2');
                 expect(res.status).to.equal(200);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.exist;
+                expect(res.body.data.attributes.username).to.equal('bob');
             } catch (err) {
                 throw err;
             }

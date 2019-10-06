@@ -1,7 +1,7 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { getById, create, update, destroy } = require('../services/User');
-const { AllowOnlyAuthenticated, OnError, RouteDisabled } = require('../utils/Middlewares');
+const { create, update, destroy } = require('../services/User');
+const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const userController = require('../controllers/user');
 
 const router = Router();
@@ -10,21 +10,12 @@ const routes = [
     {
         method: 'get',
         path: '/users',
-        handler: [AllowOnlyAuthenticated, OnError, RouteDisabled, userController.getAll]
+        handler: [AllowOnlyAuthenticated, OnError, userController.getAll]
     },
     {
         method: 'get',
         path: '/users/me',
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id } = ctx.state.user;
-                const user = await getById(id);
-                ctx.body = { ...user };
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.getMe]
     },
     {
         method: 'get',
@@ -35,18 +26,8 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                throw Error('this route is disabled');
-                const { id } = ctx.params;
-                ctx.body = await getById(id);
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.get]
     },
-
     {
         method: 'post',
         path: '/users',

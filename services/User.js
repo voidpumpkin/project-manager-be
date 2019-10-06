@@ -8,24 +8,22 @@ const hashPassword = async password => {
     return await bcrypt.hash(password, salt);
 };
 
-const getUsersIds = async () => {
+const getAllIds = async () => {
     const users = await User.findAll({
         raw: true
     });
     return users.map(e => e.id);
 };
 
-exports.getById = async id => {
+const getById = async id => {
     const userInstance = await User.findByPk(id);
-    const user = await User.findByPk(id, {
-        raw: true
-    });
-    if (!user) {
+    if (!userInstance) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
     }
-    const managedProjects = await userInstance.getManagedProject({ raw: true }).map(e => e.id);
-    const participatedProjects = await userInstance.getProject({ raw: true }).map(e => e.id);
-    return { ...user, participatedProjects, managedProjects };
+    const managedProjectsIds = await userInstance.getManagedProject({ raw: true }).map(e => e.id);
+    const participatedProjectsIds = await userInstance.getProject({ raw: true }).map(e => e.id);
+    const rawUserInstance = await User.findByPk(id, { raw: true });
+    return { managedProjectsIds, participatedProjectsIds, ...rawUserInstance };
 };
 
 exports.create = async user => {
@@ -58,4 +56,5 @@ exports.destroy = async id => {
     await user.destroy();
 };
 
-module.exports.getUsersIds = getUsersIds;
+module.exports.getAllIds = getAllIds;
+module.exports.getById = getById;
