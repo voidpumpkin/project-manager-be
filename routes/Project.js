@@ -1,6 +1,5 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { destroy, removeParticipator } = require('../services/Project');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const projectController = require('../controllers/Project');
 
@@ -146,16 +145,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { id } = ctx.params;
-                await destroy(id, userId);
-                ctx.status = 204;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.destroy]
     }
 ];
 

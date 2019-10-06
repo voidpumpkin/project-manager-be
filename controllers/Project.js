@@ -40,6 +40,13 @@ const patch = async ctx => {
     ctx.status = 204;
 };
 
+const destroy = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    await destroy(id, userId);
+    ctx.status = 204;
+};
+
 const getParticipators = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
@@ -83,6 +90,7 @@ module.exports = {
     get,
     post,
     patch,
+    destroy,
     getParticipators,
     addParticipator,
     removeParticipator,
