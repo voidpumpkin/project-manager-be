@@ -15,7 +15,7 @@ app.keys = ['voidpumpkin-session-secret'];
 app.use(session(app));
 
 // authentication
-require('./auth');
+require('./utils/Authentication');
 const passport = require('koa-passport');
 app.use(passport.initialize());
 app.use(passport.session());
