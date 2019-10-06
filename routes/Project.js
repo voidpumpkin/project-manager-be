@@ -42,6 +42,28 @@ const routes = [
     },
     {
         method: 'post',
+        path: '/projects/:id/relationships/participators',
+        validate: {
+            type: 'json',
+            params: {
+                id: Joi.number()
+            },
+            body: {
+                relationships: {
+                    participator: {
+                        type: Joi.string()
+                            .valid('users')
+                            .required(),
+                        id: Joi.number().required()
+                    }
+                }
+            },
+            continueOnError: true
+        },
+        handler: [AllowOnlyAuthenticated, OnError, userController.addParticipator]
+    },
+    {
+        method: 'post',
         path: '/projects',
         validate: {
             type: 'json',

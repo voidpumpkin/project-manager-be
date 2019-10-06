@@ -52,6 +52,14 @@ const getParticipators = async ctx => {
     ctx.status = 200;
 };
 
+const addParticipator = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    const participatorId = ctx.request.body.relationships.participator.id;
+    await projectService.addParticipator(id, participatorId, userId);
+    ctx.status = 204;
+};
+
 const getTasks = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
@@ -64,4 +72,12 @@ const getTasks = async ctx => {
     ctx.status = 200;
 };
 
-module.exports = { parseProjectResponse, get, post, patch, getParticipators, getTasks };
+module.exports = {
+    parseProjectResponse,
+    get,
+    post,
+    patch,
+    getParticipators,
+    addParticipator,
+    getTasks
+};

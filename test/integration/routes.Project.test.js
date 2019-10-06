@@ -334,19 +334,25 @@ describe('routes : Project', () => {
             }
         });
     });
-    describe('PATCH /projects/:id/participators', () => {
-        it('should add participators', async () => {
-            const project = await Project.create({
+    describe('POST /projects/:id/relationships/participators', () => {
+        it('should add participator', async () => {
+            await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await project.addParticipator(authenticatedUserDBInst);
+            await User.create({
+                username: 'testo',
+                password: 'testo'
+            });
             try {
-                const res = await authenticatedUser.patch('/projects/1/participators');
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body.ids).to.be.an('array');
+                const res = await authenticatedUser
+                    .post('/projects/1/relationships/participators')
+                    .send({ relationships: { participator: { type: 'users', id: 2 } } });
+                expect(res.status).to.equal(204);
+                const projectInstance = await Project.findByPk(1);
+                const relationship = await projectInstance.getParticipator({ where: { id: 2 } });
+                expect(relationship).to.exist;
             } catch (err) {
                 throw err;
             }

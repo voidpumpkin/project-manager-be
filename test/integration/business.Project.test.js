@@ -202,9 +202,16 @@ describe('business : Project', () => {
                 managerId: 2
             });
             try {
-                const res = await authenticatedUser.post('/projects/1/participators').send({
-                    participatorId: 1
-                });
+                const res = await authenticatedUser
+                    .post('/projects/1/relationships/participators')
+                    .send({
+                        relationships: {
+                            participator: {
+                                type: 'users',
+                                id: 1
+                            }
+                        }
+                    });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
                     'Participators can be added only when you are the Project manager'
