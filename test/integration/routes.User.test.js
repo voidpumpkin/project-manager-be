@@ -145,13 +145,15 @@ describe('routes : User', () => {
         });
     });
 
-    describe.skip('PUT /users/:id', () => {
+    describe('PATCH /users/me', () => {
         it('should update a user username', async () => {
             await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await authenticatedUser.put('/users/2').send({ username: 'sam' });
-                const { username, password } = await User.findByPk(2);
+                const res = await authenticatedUser
+                    .patch('/users/me')
+                    .send({ data: { type: 'users', attributes: { username: 'sam' } } });
                 expect(res.status).to.equal(204);
+                const { username, password } = await User.findByPk(1);
                 expect(username).to.equal('sam');
                 expect(password).to.exist;
             } catch (err) {
@@ -161,37 +163,25 @@ describe('routes : User', () => {
         it('username already taken', async () => {
             await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await authenticatedUser
-                    .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
+                const res = await authenticatedUser.patch('/users/me').send({
+                    data: { type: 'users', attributes: { username: 'bob', password: 'jones' } }
+                });
                 expect(res.status).to.equal(400);
-
                 expect(res.body.errors[0].title).to.equal('username already taken');
             } catch (err) {
                 throw err;
             }
         });
         it('should update a user password', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await authenticatedUser.put('/users/2').send({ password: 'uncle' });
-                const { username, password } = await User.findByPk(2);
+                const res = await authenticatedUser
+                    .patch('/users/me')
+                    .send({ data: { type: 'users', attributes: { password: 'uncle' } } });
+                expect(res.status).to.equal(204);
+                const { username, password } = await User.findByPk(1);
                 const isPasswordMatching = await bcrypt.compare('uncle', password);
-                expect(res.status).to.equal(204);
-                expect(username).to.equal('bob');
+                expect(username).to.equal('test');
                 expect(isPasswordMatching).to.equal(true);
-            } catch (err) {
-                throw err;
-            }
-        });
-        it.skip('should update a user isSystemAdmin', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
-            try {
-                const res = await authenticatedUser.put('/users/2').send({});
-                const { username, password } = await User.findByPk(2);
-                expect(res.status).to.equal(204);
-                expect(username).to.equal('bob');
-                expect(password).to.exist;
             } catch (err) {
                 throw err;
             }
@@ -199,20 +189,13 @@ describe('routes : User', () => {
         it('should update a user nothing', async () => {
             await User.create({ username: 'bob', password: 'jones' });
             try {
-                const res = await authenticatedUser.put('/users/2').send({});
-                const { username, password } = await User.findByPk(2);
+                const res = await authenticatedUser
+                    .patch('/users/me')
+                    .send({ data: { type: 'users', attributes: {} } });
                 expect(res.status).to.equal(204);
+                const { username, password } = await User.findByPk(2);
                 expect(username).to.equal('bob');
                 expect(password).to.exist;
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('User does not exist', async () => {
-            try {
-                const res = await authenticatedUser.put('/users/2').send({ username: 'pinterest' });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('User with id 2 does not exist');
             } catch (err) {
                 throw err;
             }
@@ -222,8 +205,8 @@ describe('routes : User', () => {
             try {
                 const res = await chai
                     .request(server)
-                    .put('/users/1')
-                    .send({ username: 'pinterest' });
+                    .patch('/users/me')
+                    .send({ data: { type: 'users', attributes: { username: 'pinterest' } } });
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {

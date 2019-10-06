@@ -49,4 +49,12 @@ const post = async ctx => {
     ctx.body = { links, data };
     ctx.status = 201;
 };
-module.exports = { parseUserResponse, getAll, getMe, get, post };
+
+const patchMe = async ctx => {
+    const { id } = ctx.state.user;
+    const { username, password } = ctx.request.body.data.attributes;
+    await userService.update({ id, username, password });
+    ctx.status = 204;
+};
+
+module.exports = { parseUserResponse, getAll, getMe, get, post, patchMe };

@@ -35,7 +35,7 @@ const create = async user => {
     return await userModel.create({ username, password: hashedPassword });
 };
 
-exports.update = async user => {
+const update = async user => {
     const { id, username, password } = user;
     const userInstance = await userModel.findByPk(id);
     if (!userInstance) {
@@ -59,3 +59,4 @@ exports.destroy = async id => {
 module.exports.getAllIds = getAllIds;
 module.exports.getById = getById;
 module.exports.create = create;
+module.exports.update = update;

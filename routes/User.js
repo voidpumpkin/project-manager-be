@@ -53,55 +53,24 @@ const routes = [
         handler: [OnError, userController.post]
     },
     {
-        method: 'put',
+        method: 'patch',
         path: '/users/me',
         validate: {
             type: 'json',
-            params: {
-                id: Joi.number()
-            },
             body: {
-                username: Joi.string().max(255),
-                password: Joi.string().max(255)
+                data: {
+                    type: Joi.string()
+                        .valid('users')
+                        .required(),
+                    attributes: {
+                        username: Joi.string().max(255),
+                        password: Joi.string().max(255)
+                    }
+                }
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id } = ctx.state.user;
-                const { username, password } = ctx.request.body;
-                await update({ id, username, password });
-                ctx.status = 204;
-            }
-        ]
-    },
-    {
-        method: 'put',
-        path: '/users/:id',
-        validate: {
-            type: 'json',
-            params: {
-                id: Joi.number()
-            },
-            body: {
-                username: Joi.string().max(255),
-                password: Joi.string().max(255)
-            },
-            continueOnError: true
-        },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                throw Error('this route is disabled');
-                const { id } = ctx.params;
-                const { username, password } = ctx.request.body;
-                await update({ id, username, password });
-                ctx.status = 204;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.patchMe]
     },
     {
         method: 'delete',
