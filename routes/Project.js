@@ -10,6 +10,7 @@ const {
     getParticipatorsIds
 } = require('../services/Project');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
+const userController = require('../controllers/Project');
 
 const router = Router();
 
@@ -43,16 +44,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { id } = ctx.params;
-                ctx.body = await getById(id, userId);
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, userController.get]
     },
     {
         method: 'post',

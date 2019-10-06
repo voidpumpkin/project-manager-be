@@ -9,14 +9,14 @@ const isParticipator = async (projectInstance, userId) => {
 };
 
 const getParticipators = async (id, userId) => {
-    const project = await Project.findByPk(id);
-    if (!project) {
+    const projectInstance = await Project.findByPk(id);
+    if (!projectInstance) {
         throw new BusinessRuleError(`Project with id ${id} does not exist`);
     }
-    if (!(await isParticipator(project, userId))) {
+    if (!(await isParticipator(projectInstance, userId))) {
         throw new BusinessRuleError('You are not participating in this project');
     }
-    return await project.getParticipator({ raw: true });
+    return await projectInstance.getParticipator({ raw: true });
 };
 
 const getParticipatorsIds = async (id, userId) => {
@@ -24,15 +24,26 @@ const getParticipatorsIds = async (id, userId) => {
     return participators.map(e => e.id);
 };
 
+const getTasks = async id => {
+    const projectInstance = await Project.findByPk(id);
+    return await projectInstance.getTask();
+};
+
+const getTaskIds = async id => {
+    const tasks = await getTasks(id);
+    return tasks.map(e => e.id);
+};
+
 const getById = async (id, userId) => {
-    const project = await Project.findByPk(id, { raw: true });
-    if (!project) {
+    const rawProjectInstance = await Project.findByPk(id, { raw: true });
+    if (!rawProjectInstance) {
         throw new BusinessRuleError(`Project with id ${id} does not exist`);
     }
-    if (!(await isParticipator(project, userId))) {
+    if (!(await isParticipator(rawProjectInstance, userId))) {
         throw new BusinessRuleError('You are not participating in this project');
     }
-    return await Project.findByPk(id, { raw: true });
+    const taskIds = await getTaskIds(id);
+    return { taskIds, ...rawProjectInstance };
 };
 
 const addParticipator = async (projectId, participatorId, userId) => {
@@ -118,13 +129,15 @@ const destroy = async (id, userId) => {
 };
 
 module.exports = {
+    isParticipator,
+    getParticipators,
+    getParticipatorsIds,
+    getTasks,
+    getTaskIds,
     getById,
+    addParticipator,
     create,
     update,
-    destroy,
-    getParticipators,
-    addParticipator,
     removeParticipator,
-    isParticipator,
-    getParticipatorsIds
+    destroy
 };

@@ -25,6 +25,13 @@ module.exports = {
                     managerId: 3,
                     createdAt: new Date(),
                     updatedAt: new Date()
+                },
+                {
+                    title: 'Test is not allowed',
+                    details: 'blah',
+                    managerId: 3,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
                 }
             ],
             {}
