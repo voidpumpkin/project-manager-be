@@ -33,42 +33,6 @@ describe('routes : Task', () => {
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
     });
 
-    describe.skip('GET /tasks', () => {
-        it('should return tasks', async () => {
-            await Task.create({
-                title: 'Buy PC2',
-                details: 'from wallmart2',
-                isDone: false,
-                projectId: 1
-            });
-            try {
-                const res = await authenticatedUser.get('/tasks');
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body).to.have.length(2);
-                expect(res.body[0].title).to.equal('Buy PC');
-                expect(res.body[0].details).to.equal('from wallmart');
-                expect(res.body[0].projectId).to.equal(1);
-                expect(res.body[0].taskId).to.equal(null);
-                expect(res.body[1].title).to.equal('Buy PC2');
-                expect(res.body[1].details).to.equal('from wallmart2');
-                expect(res.body[1].projectId).to.equal(1);
-                expect(res.body[1].taskId).to.equal(null);
-            } catch (err) {
-                throw err;
-            }
-        });
-        it('no auth', async () => {
-            try {
-                const res = await chai.request(server).get('/tasks');
-                expect(res.status).to.equal(401);
-                expect(res.body.errors[0].title).to.equal('Unauthorized');
-            } catch (err) {
-                throw err;
-            }
-        });
-    });
-
     describe('GET /tasks/:id', () => {
         it('should return task', async () => {
             await Task.create({
