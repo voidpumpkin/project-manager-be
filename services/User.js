@@ -27,16 +27,24 @@ const getById = async id => {
 };
 
 const create = async user => {
-    const { username, password } = user;
+    const { username, password, companyName, firstName, lastName, email, phoneNumber } = user;
     if (username && (await userModel.findOne({ where: { username }, raw: true }))) {
         throw new BusinessRuleError('username already taken');
     }
     const hashedPassword = await hashPassword(password);
-    return await userModel.create({ username, password: hashedPassword });
+    return await userModel.create({
+        username,
+        password: hashedPassword,
+        companyName,
+        firstName,
+        lastName,
+        email,
+        phoneNumber
+    });
 };
 
 const update = async user => {
-    const { id, username, password } = user;
+    const { id, username, password, companyName, firstName, lastName, email, phoneNumber } = user;
     const userInstance = await userModel.findByPk(id);
     if (!userInstance) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
@@ -45,7 +53,15 @@ const update = async user => {
         throw new BusinessRuleError('username already taken');
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;
-    await userInstance.update({ username, password: hashedPassword });
+    await userInstance.update({
+        username,
+        password: hashedPassword,
+        companyName,
+        firstName,
+        lastName,
+        email,
+        phoneNumber
+    });
 };
 
 const destroy = async id => {

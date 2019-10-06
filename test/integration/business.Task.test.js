@@ -14,7 +14,11 @@ describe('business : Task', () => {
 
         authenticatedUserDBInst = await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            firstName: 'uncle',
+            lastName: 'bob',
+            email: 'uncle@bob.com',
+            phoneNumber: '6664666'
         });
         const project = await Project.create({
             title: 'Create character',
@@ -29,7 +33,14 @@ describe('business : Task', () => {
 
     describe('Get a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {
@@ -44,7 +55,14 @@ describe('business : Task', () => {
 
     describe('Create a Task', () => {
         it('allow only self as manager if you are in the project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             try {
                 const res = await authenticatedUser.post('/tasks').send({
@@ -61,7 +79,14 @@ describe('business : Task', () => {
             }
         });
         it('allow asignee only if it participates in project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.post('/tasks').send({
                     data: {
@@ -147,7 +172,14 @@ describe('business : Task', () => {
     });
     describe('Edit a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {
@@ -161,7 +193,14 @@ describe('business : Task', () => {
             }
         });
         it('allow asignee only if it participates in project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Task.create({ title: 'B', details: 'f', projectId: 1, isDone: false });
             try {
                 const res = await authenticatedUser
@@ -176,7 +215,14 @@ describe('business : Task', () => {
     });
     describe('Delete a Task', () => {
         it('allow only if you are in the project', async () => {
-            await User.create({ username: 't', password: '$' });
+            await User.create({
+                username: 't',
+                password: '$',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {

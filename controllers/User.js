@@ -43,8 +43,8 @@ const get = async ctx => {
 };
 
 const post = async ctx => {
-    const { username, password } = ctx.request.body.data.attributes;
-    const { id } = await userService.create({ username, password });
+    const user = ctx.request.body.data.attributes;
+    const { id } = await userService.create(user);
     const { links, data } = parseUserResponse(await userService.getById(id));
     ctx.body = { links, data };
     ctx.status = 201;
@@ -52,8 +52,8 @@ const post = async ctx => {
 
 const patchMe = async ctx => {
     const { id } = ctx.state.user;
-    const { username, password } = ctx.request.body.data.attributes;
-    await userService.update({ id, username, password });
+    const user = ctx.request.body.data.attributes;
+    await userService.update({ id, ...user });
     ctx.status = 204;
 };
 

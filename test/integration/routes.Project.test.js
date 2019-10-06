@@ -13,7 +13,11 @@ describe('routes : Project', () => {
         await sequelize.sync({ force: true });
         authenticatedUserDBInst = await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            firstName: 'uncle',
+            lastName: 'bob',
+            email: 'uncle@bob.com',
+            phoneNumber: '6664666'
         });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -68,7 +72,7 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await project.addParticipator(authenticatedUserDBInst);
+            await project.addParticipator(await User.findByPk(1));
             try {
                 const res = await authenticatedUser.get('/projects/1/relationships/participators');
                 expect(res.status).to.equal(200);
@@ -235,7 +239,14 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
+            await ProjectParticipator.create({
+                participatorId: 1,
+                projectId: 1,
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.patch('/projects/1').send({
                     data: {
@@ -258,7 +269,14 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
+            await ProjectParticipator.create({
+                participatorId: 1,
+                projectId: 1,
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.patch('/projects/1').send({
                     data: {
@@ -281,7 +299,14 @@ describe('routes : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            await ProjectParticipator.create({ participatorId: 1, projectId: 1 });
+            await ProjectParticipator.create({
+                participatorId: 1,
+                projectId: 1,
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.patch('/projects/1').send({
                     data: {
@@ -343,7 +368,11 @@ describe('routes : Project', () => {
             });
             await User.create({
                 username: 'testo',
-                password: 'testo'
+                password: 'testo',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
             });
             try {
                 const res = await authenticatedUser

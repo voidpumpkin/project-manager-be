@@ -14,7 +14,11 @@ describe('routes : Task', () => {
 
         await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            firstName: 'uncle',
+            lastName: 'bob',
+            email: 'uncle@bob.com',
+            phoneNumber: '6664666'
         });
         await Project.create({
             title: 'Create character',

@@ -14,7 +14,11 @@ describe('routes : User', () => {
         await sequelize.sync({ force: true });
         await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            firstName: 'uncle',
+            lastName: 'bob',
+            email: 'uncle@bob.com',
+            phoneNumber: '6664666'
         });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -22,7 +26,14 @@ describe('routes : User', () => {
 
     describe('GET /users', () => {
         it('should return users', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.get('/users');
                 expect(res.status).to.equal(200);
@@ -51,7 +62,14 @@ describe('routes : User', () => {
 
     describe('GET /users/:id', () => {
         it('should return user', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.get('/users/2');
                 expect(res.status).to.equal(200);
@@ -71,7 +89,14 @@ describe('routes : User', () => {
             }
         });
         it('no auth', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await chai.request(server).get('/users/2');
                 expect(res.status).to.equal(401);
@@ -91,7 +116,14 @@ describe('routes : User', () => {
                     .send({
                         data: {
                             type: 'users',
-                            attributes: { username: 'bob', password: 'jones' }
+                            attributes: {
+                                username: 'bob',
+                                password: 'jones',
+                                firstName: 'uncle',
+                                lastName: 'bob',
+                                email: 'uncle@bob.com',
+                                phoneNumber: '6664666'
+                            }
                         }
                     });
                 expect(res.status).to.equal(201);
@@ -113,7 +145,14 @@ describe('routes : User', () => {
                     .send({
                         data: {
                             type: 'users',
-                            attributes: { username: 'bob', password: 'jones' }
+                            attributes: {
+                                username: 'bob',
+                                password: 'jones',
+                                firstName: 'uncle',
+                                lastName: 'bob',
+                                email: 'uncle@bob.com',
+                                phoneNumber: '6664666'
+                            }
                         }
                     });
                 expect(res.status).to.equal(201);
@@ -126,7 +165,14 @@ describe('routes : User', () => {
             }
         });
         it('username already taken', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await chai
                     .request(server)
@@ -134,7 +180,14 @@ describe('routes : User', () => {
                     .send({
                         data: {
                             type: 'users',
-                            attributes: { username: 'bob', password: 'jones' }
+                            attributes: {
+                                username: 'bob',
+                                password: 'jones',
+                                firstName: 'uncle',
+                                lastName: 'bob',
+                                email: 'uncle@bob.com',
+                                phoneNumber: '6664666'
+                            }
                         }
                     });
                 expect(res.status).to.equal(400);
@@ -147,7 +200,14 @@ describe('routes : User', () => {
 
     describe('PATCH /users/me', () => {
         it('should update a user username', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser
                     .patch('/users/me')
@@ -161,7 +221,14 @@ describe('routes : User', () => {
             }
         });
         it('username already taken', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.patch('/users/me').send({
                     data: { type: 'users', attributes: { username: 'bob', password: 'jones' } }
@@ -187,7 +254,14 @@ describe('routes : User', () => {
             }
         });
         it('should update a user nothing', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser
                     .patch('/users/me')
@@ -201,7 +275,14 @@ describe('routes : User', () => {
             }
         });
         it('no auth', async () => {
-            await User.create({ username: 'bob', password: 'jones' });
+            await User.create({
+                username: 'bob',
+                password: 'jones',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await chai
                     .request(server)

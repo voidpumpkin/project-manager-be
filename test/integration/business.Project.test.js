@@ -13,7 +13,11 @@ describe('business : Project', () => {
         await sequelize.sync({ force: true });
         authenticatedUserDBInst = await User.create({
             username: 'test',
-            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W'
+            password: '$2b$08$HMgLqPMffOj2yZY4qo80eOPkgViVZ6Ri1bESw03ufHLPY4sMurL/W',
+            firstName: 'uncle',
+            lastName: 'bob',
+            email: 'uncle@bob.com',
+            phoneNumber: '6664666'
         });
         authenticatedUser = chai.request.agent(server);
         await authenticatedUser.post('/login').send({ username: 'test', password: 'test' });
@@ -21,7 +25,14 @@ describe('business : Project', () => {
 
     describe('Get project', () => {
         it('allow only when you are participator', async () => {
-            await User.create({ username: 'a', password: 'a' });
+            await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -41,7 +52,14 @@ describe('business : Project', () => {
 
     describe('Get participators of a project', () => {
         it('allow only when you are project participator', async () => {
-            const user = await User.create({ username: 'a', password: 'a' });
+            const user = await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -62,7 +80,14 @@ describe('business : Project', () => {
 
     describe('Create a project', () => {
         it('allow only self as a manager', async () => {
-            await User.create({ username: 'a', password: 'a' });
+            await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             try {
                 const res = await authenticatedUser.post('/projects').send({
                     data: {
@@ -132,7 +157,14 @@ describe('business : Project', () => {
             }
         });
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a' });
+            await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -175,7 +207,14 @@ describe('business : Project', () => {
             }
         });
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a' });
+            await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             const project = await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',
@@ -195,7 +234,14 @@ describe('business : Project', () => {
     });
     describe('Add project participator', () => {
         it('allow only when you are manager', async () => {
-            await User.create({ username: 'a', password: 'a' });
+            await User.create({
+                username: 'a',
+                password: 'a',
+                firstName: 'uncle',
+                lastName: 'bob',
+                email: 'uncle@bob.com',
+                phoneNumber: '6664666'
+            });
             await Project.create({
                 title: 'Create character',
                 details: 'just copy from internet',

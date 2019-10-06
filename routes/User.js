@@ -43,6 +43,19 @@ const routes = [
                             .required(),
                         password: Joi.string()
                             .max(255)
+                            .required(),
+                        companyName: Joi.string().max(255),
+                        firstName: Joi.string()
+                            .max(255)
+                            .required(),
+                        lastName: Joi.string()
+                            .max(255)
+                            .required(),
+                        email: Joi.string()
+                            .max(255)
+                            .required(),
+                        phoneNumber: Joi.string()
+                            .max(255)
                             .required()
                     }
                 }
@@ -63,7 +76,12 @@ const routes = [
                         .required(),
                     attributes: {
                         username: Joi.string().max(255),
-                        password: Joi.string().max(255)
+                        password: Joi.string().max(255),
+                        companyName: Joi.string().max(255),
+                        firstName: Joi.string().max(255),
+                        lastName: Joi.string().max(255),
+                        email: Joi.string().max(255),
+                        phoneNumber: Joi.string().max(255)
                     }
                 }
             },
