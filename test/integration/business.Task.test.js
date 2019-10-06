@@ -47,9 +47,13 @@ describe('business : Task', () => {
             await User.create({ username: 't', password: '$' });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2 });
+                const res = await authenticatedUser.post('/tasks').send({
+                    data: {
+                        type: 'tasks',
+                        attributes: { title: 'Buy PC', details: 'from wallmart' }
+                    },
+                    relationships: { project: { type: 'projects', id: 2 } }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
@@ -60,10 +64,17 @@ describe('business : Task', () => {
             await User.create({ username: 't', password: '$' });
             try {
                 const res = await authenticatedUser.post('/tasks').send({
-                    title: 'Buy PC',
-                    details: 'from wallmart',
-                    projectId: 1,
-                    assigneeId: 2
+                    data: {
+                        type: 'tasks',
+                        attributes: {
+                            title: 'Buy PC',
+                            details: 'from wallmart'
+                        }
+                    },
+                    relationships: {
+                        project: { type: 'projects', id: 1 },
+                        assignee: { type: 'users', id: 2 }
+                    }
                 });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
@@ -73,9 +84,16 @@ describe('business : Task', () => {
         });
         it('parent project does not exist', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 20, taskId: 1 });
+                const res = await authenticatedUser.post('/tasks').send({
+                    data: {
+                        type: 'tasks',
+                        attributes: { title: 'Buy PC', details: 'from wallmart' }
+                    },
+                    relationships: {
+                        project: { type: 'projects', id: 20 },
+                        task: { type: 'tasks', id: 1 }
+                    }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal(
                     'parent project with id 20 does not exist'
@@ -86,9 +104,16 @@ describe('business : Task', () => {
         });
         it('parent task does not exist', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 11 });
+                const res = await authenticatedUser.post('/tasks').send({
+                    data: {
+                        type: 'tasks',
+                        attributes: { title: 'Buy PC', details: 'from wallmart' }
+                    },
+                    relationships: {
+                        project: { type: 'projects', id: 1 },
+                        task: { type: 'tasks', id: 11 }
+                    }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('parent task with id 11 does not exist');
             } catch (err) {
@@ -103,9 +128,16 @@ describe('business : Task', () => {
             });
             await project.addParticipator(authenticatedUserDBInst);
             try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 2, taskId: 1 });
+                const res = await authenticatedUser.post('/tasks').send({
+                    data: {
+                        type: 'tasks',
+                        attributes: { title: 'Buy PC', details: 'from wallmart' }
+                    },
+                    relationships: {
+                        project: { type: 'projects', id: 2 },
+                        task: { type: 'tasks', id: 1 }
+                    }
+                });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('parent task with id 1 does not exist');
             } catch (err) {

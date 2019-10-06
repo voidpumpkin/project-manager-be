@@ -82,16 +82,23 @@ describe('routes : Task', () => {
     describe('POST /tasks', () => {
         it('should return a task', async () => {
             try {
-                const res = await authenticatedUser
-                    .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 });
-                expect(res.status).to.equal(200);
+                const res = await authenticatedUser.post('/tasks').send({
+                    data: {
+                        type: 'tasks',
+                        attributes: { title: 'Buy PC', details: 'from wallmart' }
+                    },
+                    relationships: {
+                        project: { type: 'projects', id: 1 },
+                        task: { type: 'tasks', id: 1 }
+                    }
+                });
+                expect(res.status).to.equal(201);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(2);
-                expect(res.body.title).to.equal('Buy PC');
-                expect(res.body.details).to.equal('from wallmart');
-                expect(res.body.projectId).to.equal(1);
-                expect(res.body.taskId).to.equal(1);
+                expect(res.body.data.id).to.equal(2);
+                expect(res.body.data.attributes.title).to.equal('Buy PC');
+                expect(res.body.data.attributes.details).to.equal('from wallmart');
+                expect(res.body.relationships.project.id).to.equal(1);
+                expect(res.body.relationships.task.id).to.equal(1);
             } catch (err) {
                 throw err;
             }
@@ -101,7 +108,22 @@ describe('routes : Task', () => {
                 const res = await chai
                     .request(server)
                     .post('/tasks')
-                    .send({ title: 'Buy PC', details: 'from wallmart', projectId: 1, taskId: 1 });
+                    .send({
+                        data: {
+                            type: 'tasks',
+                            attributes: {
+                                title: 'Buy PC',
+                                details: 'from wallmart'
+                            }
+                        },
+                        relationships: {
+                            project: {
+                                type: 'projects',
+                                id: 1
+                            },
+                            task: { type: 'tasks', id: 1 }
+                        }
+                    });
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {

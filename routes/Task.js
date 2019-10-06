@@ -1,6 +1,6 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
-const { create, update, destroy } = require('../services/Task');
+const { update, destroy } = require('../services/Task');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const taskController = require('../controllers/Task');
 
@@ -24,33 +24,44 @@ const routes = [
         validate: {
             type: 'json',
             body: {
-                title: Joi.string()
-                    .max(255)
-                    .required(),
-                details: Joi.string()
-                    .allow('')
-                    .max(255)
-                    .required(),
-                isDone: Joi.boolean(),
-                projectId: Joi.number().required(),
-                taskId: Joi.number(),
-                assigneeId: Joi.number()
+                data: {
+                    type: Joi.string()
+                        .valid('tasks')
+                        .required(),
+                    attributes: {
+                        title: Joi.string()
+                            .max(255)
+                            .required(),
+                        details: Joi.string()
+                            .allow('')
+                            .max(255)
+                            .required()
+                    }
+                },
+                relationships: {
+                    project: Joi.object({
+                        type: Joi.string()
+                            .valid('projects')
+                            .required(),
+                        id: Joi.number().required()
+                    }).required(),
+                    assignee: Joi.object({
+                        type: Joi.string()
+                            .valid('users')
+                            .required(),
+                        id: Joi.number().required()
+                    }),
+                    task: Joi.object({
+                        type: Joi.string()
+                            .valid('tasks')
+                            .required(),
+                        id: Joi.number().required()
+                    })
+                }
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { title, details, isDone, projectId, taskId, assigneeId } = ctx.request.body;
-                ctx.body = await create(
-                    { title, details, isDone, projectId, taskId, assigneeId },
-                    userId
-                );
-                ctx.status = 200;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, taskController.post]
     },
     {
         method: 'put',
