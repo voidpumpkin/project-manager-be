@@ -51,4 +51,11 @@ const patch = async ctx => {
     ctx.status = 204;
 };
 
-module.exports = { get, post, patch };
+const destroy = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    await taskService.destroy(id, userId);
+    ctx.status = 204;
+};
+
+module.exports = { get, post, patch, destroy };

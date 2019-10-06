@@ -15,7 +15,7 @@ const getById = async (id, userId) => {
     return task;
 };
 
-exports.create = async (task, userId) => {
+const create = async (task, userId) => {
     const { title, details, isDone = false, projectId, taskId: parentTaskId, assigneeId } = task;
     const project = await Project.findByPk(projectId, { raw: true });
     const parentTask = await Task.findByPk(parentTaskId, { raw: true });
@@ -41,7 +41,7 @@ exports.create = async (task, userId) => {
     });
 };
 
-exports.update = async (task, userId) => {
+const update = async (task, userId) => {
     const { id, title, details, isDone, assigneeId } = task;
     const taskInstance = await Task.findByPk(id);
     if (!taskInstance) {
@@ -57,7 +57,7 @@ exports.update = async (task, userId) => {
     await taskInstance.update({ title, details, isDone, assigneeId });
 };
 
-exports.destroy = async (id, userId) => {
+const destroy = async (id, userId) => {
     const task = await Task.findByPk(id);
     if (!task) {
         throw new BusinessRuleError(`Task with id ${id} does not exist`);
@@ -69,4 +69,4 @@ exports.destroy = async (id, userId) => {
     await task.destroy();
 };
 
-exports.getById = getById;
+module.exports = { getById, create, update, destroy };
