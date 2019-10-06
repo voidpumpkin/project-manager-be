@@ -2,7 +2,7 @@ const Router = require('koa-joi-router');
 const { Joi } = Router;
 const { destroy, removeParticipator } = require('../services/Project');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
-const userController = require('../controllers/Project');
+const projectController = require('../controllers/Project');
 
 const router = Router();
 
@@ -16,7 +16,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.getParticipators]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.getParticipators]
     },
     {
         method: 'get',
@@ -27,7 +27,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.getTasks]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.getTasks]
     },
     {
         method: 'get',
@@ -38,7 +38,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.get]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.get]
     },
     {
         method: 'post',
@@ -60,7 +60,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.addParticipator]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.addParticipator]
     },
     {
         method: 'post',
@@ -93,7 +93,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.post]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.post]
     },
     {
         method: 'patch',
@@ -123,7 +123,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.patch]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.patch]
     },
     {
         method: 'delete',
@@ -135,7 +135,7 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, userController.removeParticipator]
+        handler: [AllowOnlyAuthenticated, OnError, projectController.removeParticipator]
     },
     {
         method: 'delete',
