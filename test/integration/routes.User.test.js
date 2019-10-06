@@ -88,13 +88,18 @@ describe('routes : User', () => {
                 const res = await chai
                     .request(server)
                     .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
+                    .send({
+                        data: {
+                            type: 'users',
+                            attributes: { username: 'bob', password: 'jones' }
+                        }
+                    });
+                expect(res.status).to.equal(201);
+                expect(res.type).to.equal('application/json');
                 const { password } = await User.findByPk(2);
                 const isPasswordMatching = await bcrypt.compare('jones', password);
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(2);
-                expect(res.body.username).to.equal('bob');
+                expect(res.body.data.id).to.equal(2);
+                expect(res.body.data.attributes.username).to.equal('bob');
                 expect(isPasswordMatching).to.equal(true);
             } catch (err) {
                 throw err;
@@ -105,44 +110,17 @@ describe('routes : User', () => {
                 const res = await chai
                     .request(server)
                     .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(200);
+                    .send({
+                        data: {
+                            type: 'users',
+                            attributes: { username: 'bob', password: 'jones' }
+                        }
+                    });
+                expect(res.status).to.equal(201);
                 expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(2);
-                expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.exist;
-            } catch (err) {
-                throw err;
-            }
-        });
-        it.skip('should return a user when isSystemAdmin true', async () => {
-            try {
-                const res = await chai
-                    .request(server)
-                    .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(2);
-                expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.exist;
-                expect(res.body.isSystemAdmin).to.equal(true);
-            } catch (err) {
-                throw err;
-            }
-        });
-        it.skip('should return a user when no isSystemAdmin', async () => {
-            try {
-                const res = await chai
-                    .request(server)
-                    .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body.id).to.equal(2);
-                expect(res.body.username).to.equal('bob');
-                expect(res.body.password).to.exist;
-                expect(res.body.isSystemAdmin).to.equal(false);
+                expect(res.body.data.id).to.equal(2);
+                expect(res.body.data.attributes.username).to.equal('bob');
+                expect(res.body.data.attributes.password).to.exist;
             } catch (err) {
                 throw err;
             }
@@ -153,7 +131,12 @@ describe('routes : User', () => {
                 const res = await chai
                     .request(server)
                     .post('/users')
-                    .send({ username: 'bob', password: 'jones' });
+                    .send({
+                        data: {
+                            type: 'users',
+                            attributes: { username: 'bob', password: 'jones' }
+                        }
+                    });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('username already taken');
             } catch (err) {

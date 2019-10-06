@@ -1,8 +1,8 @@
 const Router = require('koa-joi-router');
 const { Joi } = Router;
-const { create, update, destroy } = require('../services/User');
+const { update, destroy } = require('../services/User');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
-const userController = require('../controllers/user');
+const userController = require('../controllers/User');
 
 const router = Router();
 
@@ -34,23 +34,23 @@ const routes = [
         validate: {
             type: 'json',
             body: {
-                username: Joi.string()
-                    .max(255)
-                    .required(),
-                password: Joi.string()
-                    .max(255)
-                    .required()
+                data: {
+                    type: Joi.string()
+                        .valid('users')
+                        .required(),
+                    attributes: {
+                        username: Joi.string()
+                            .max(255)
+                            .required(),
+                        password: Joi.string()
+                            .max(255)
+                            .required()
+                    }
+                }
             },
             continueOnError: true
         },
-        handler: [
-            OnError,
-            async ctx => {
-                const { username, password } = ctx.request.body;
-                ctx.body = await create({ username, password });
-                ctx.status = 200;
-            }
-        ]
+        handler: [OnError, userController.post]
     },
     {
         method: 'put',

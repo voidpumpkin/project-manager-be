@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User } = require('../models');
+const { User: userModel } = require('../models');
 const { BusinessRuleError } = require('../errors/BusinessRuleError');
 
 const hashPassword = async password => {
@@ -9,39 +9,39 @@ const hashPassword = async password => {
 };
 
 const getAllIds = async () => {
-    const users = await User.findAll({
+    const users = await userModel.findAll({
         raw: true
     });
     return users.map(e => e.id);
 };
 
 const getById = async id => {
-    const userInstance = await User.findByPk(id);
+    const userInstance = await userModel.findByPk(id);
     if (!userInstance) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
     }
     const managedProjectsIds = await userInstance.getManagedProject({ raw: true }).map(e => e.id);
     const participatedProjectsIds = await userInstance.getProject({ raw: true }).map(e => e.id);
-    const rawUserInstance = await User.findByPk(id, { raw: true });
+    const rawUserInstance = await userModel.findByPk(id, { raw: true });
     return { managedProjectsIds, participatedProjectsIds, ...rawUserInstance };
 };
 
-exports.create = async user => {
+const create = async user => {
     const { username, password } = user;
-    if (username && (await User.findOne({ where: { username }, raw: true }))) {
+    if (username && (await userModel.findOne({ where: { username }, raw: true }))) {
         throw new BusinessRuleError('username already taken');
     }
     const hashedPassword = await hashPassword(password);
-    return await User.create({ username, password: hashedPassword });
+    return await userModel.create({ username, password: hashedPassword });
 };
 
 exports.update = async user => {
     const { id, username, password } = user;
-    const userInstance = await User.findByPk(id);
+    const userInstance = await userModel.findByPk(id);
     if (!userInstance) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
     }
-    if (username && (await User.findOne({ where: { username }, raw: true }))) {
+    if (username && (await userModel.findOne({ where: { username }, raw: true }))) {
         throw new BusinessRuleError('username already taken');
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;
@@ -49,7 +49,7 @@ exports.update = async user => {
 };
 
 exports.destroy = async id => {
-    const user = await User.findByPk(id);
+    const user = await userModel.findByPk(id);
     if (!user) {
         throw new BusinessRuleError(`User with id ${id} does not exist`);
     }
@@ -58,3 +58,4 @@ exports.destroy = async id => {
 
 module.exports.getAllIds = getAllIds;
 module.exports.getById = getById;
+module.exports.create = create;
