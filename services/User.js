@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { User: userModel } = require('../models');
-const { BusinessRuleError } = require('../errors/BusinessRuleError');
+const { BusinessRuleError } = require('../utils/BusinessRuleError');
 
 const hashPassword = async password => {
     const saltRounds = 8;

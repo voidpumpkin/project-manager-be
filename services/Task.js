@@ -1,7 +1,7 @@
 const { Task, Project } = require('../models');
 const { get } = require('../utils');
 const { isParticipator } = require('./Project');
-const { BusinessRuleError } = require('../errors/BusinessRuleError');
+const { BusinessRuleError } = require('../utils/BusinessRuleError');
 
 const getById = async (id, userId) => {
     const task = await Task.findByPk(id, { raw: true });

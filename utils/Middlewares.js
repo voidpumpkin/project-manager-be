@@ -1,5 +1,5 @@
 const { logCtxErr } = require('../utils');
-const { BusinessRuleError } = require('../errors/BusinessRuleError');
+const { BusinessRuleError } = require('./BusinessRuleError');
 
 const AllowOnlyAuthenticated = async (ctx, next) => {
     if (ctx.isAuthenticated()) {

@@ -1,5 +1,5 @@
 const { Project, ProjectParticipator, User } = require('../models');
-const { BusinessRuleError } = require('../errors/BusinessRuleError');
+const { BusinessRuleError } = require('../utils/BusinessRuleError');
 
 const isParticipator = async (projectInstance, userId) => {
     const projectParticipator = await ProjectParticipator.findOne({
