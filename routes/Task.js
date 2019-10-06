@@ -1,24 +1,11 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
-const { getAll, getById, create, update, destroy } = require('../services/Task');
+const { getById, create, update, destroy } = require('../services/Task');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 
 const router = Router();
 
 const routes = [
-    {
-        method: 'get',
-        path: '/tasks',
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                throw Error('this route is disabled');
-                ctx.body = await getAll();
-                ctx.status = 200;
-            }
-        ]
-    },
     {
         method: 'get',
         path: '/tasks/:id',

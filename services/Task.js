@@ -3,10 +3,6 @@ const { get } = require('../utils');
 const { isParticipator } = require('./Project');
 const { BusinessRuleError } = require('../errors/BusinessRuleError');
 
-exports.getAll = async () => {
-    return await Task.findAll({ raw: true });
-};
-
 exports.getById = async (id, userId) => {
     const task = await Task.findByPk(id, { raw: true });
     if (!task) {
