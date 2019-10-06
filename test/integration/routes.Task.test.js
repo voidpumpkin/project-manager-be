@@ -132,7 +132,7 @@ describe('routes : Task', () => {
         });
     });
 
-    describe('PUT /tasks/:id', () => {
+    describe('PATCH /tasks/:id', () => {
         it('should update task title', async () => {
             await Task.create({
                 title: 'Buy PC',
@@ -142,8 +142,8 @@ describe('routes : Task', () => {
             });
             try {
                 const res = await authenticatedUser
-                    .put('/tasks/2')
-                    .send({ title: 'Buy better PC' });
+                    .patch('/tasks/2')
+                    .send({ data: { type: 'tasks', attributes: { title: 'Buy better PC' } } });
                 const { id, title, details, projectId, taskId } = await Task.findByPk(2);
                 expect(res.status).to.equal(204);
                 expect(id).to.equal(2);
@@ -164,8 +164,8 @@ describe('routes : Task', () => {
             });
             try {
                 const res = await authenticatedUser
-                    .put('/tasks/2')
-                    .send({ details: 'from target' });
+                    .patch('/tasks/2')
+                    .send({ data: { type: 'tasks', attributes: { details: 'from target' } } });
                 const { id, title, details, projectId, taskId } = await Task.findByPk(2);
                 expect(res.status).to.equal(204);
                 expect(id).to.equal(2);
@@ -180,8 +180,8 @@ describe('routes : Task', () => {
         it('Task with does not exist', async () => {
             try {
                 const res = await authenticatedUser
-                    .put('/tasks/22')
-                    .send({ details: 'from target' });
+                    .patch('/tasks/22')
+                    .send({ data: { type: 'tasks', attributes: { details: 'from target' } } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('Task with id 22 does not exist');
             } catch (err) {
@@ -196,9 +196,13 @@ describe('routes : Task', () => {
                 projectId: 1
             });
             try {
-                const res = await authenticatedUser.put('/tasks/2').send({ projectId: 5 });
+                const res = await authenticatedUser
+                    .patch('/tasks/2')
+                    .send({ relationships: { project: { type: 'projects', id: 5 } } });
                 expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('"projectId" is not allowed');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "relationships" fails because ["project" is not allowed]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -211,9 +215,13 @@ describe('routes : Task', () => {
                 projectId: 1
             });
             try {
-                const res = await authenticatedUser.put('/tasks/2').send({ taskId: 5 });
+                const res = await authenticatedUser
+                    .patch('/tasks/2')
+                    .send({ relationships: { task: { type: 'tasks', id: 5 } } });
                 expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('"taskId" is not allowed');
+                expect(res.body.errors[0].title).to.equal(
+                    'child "relationships" fails because ["task" is not allowed]'
+                );
             } catch (err) {
                 throw err;
             }
@@ -228,8 +236,8 @@ describe('routes : Task', () => {
             try {
                 const res = await chai
                     .request(server)
-                    .put('/tasks/2')
-                    .send({ title: 'Buy better PC' });
+                    .patch('/tasks/2')
+                    .send({ data: { type: 'tasks', attributes: { title: 'Buy better PC' } } });
                 expect(res.status).to.equal(401);
                 expect(res.body.errors[0].title).to.equal('Unauthorized');
             } catch (err) {

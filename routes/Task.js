@@ -1,6 +1,6 @@
 const Router = require('koa-joi-router');
 const Joi = Router.Joi;
-const { update, destroy } = require('../services/Task');
+const { destroy } = require('../services/Task');
 const { AllowOnlyAuthenticated, OnError } = require('../utils/Middlewares');
 const taskController = require('../controllers/Task');
 
@@ -64,7 +64,7 @@ const routes = [
         handler: [AllowOnlyAuthenticated, OnError, taskController.post]
     },
     {
-        method: 'put',
+        method: 'patch',
         path: '/tasks/:id',
         validate: {
             type: 'json',
@@ -72,26 +72,30 @@ const routes = [
                 id: Joi.number()
             },
             body: {
-                title: Joi.string().max(255),
-                details: Joi.string()
-                    .allow('')
-                    .max(255),
-                isDone: Joi.boolean(),
-                assigneeId: Joi.number()
+                data: Joi.object({
+                    type: Joi.string()
+                        .valid('tasks')
+                        .required(),
+                    attributes: {
+                        title: Joi.string().max(255),
+                        details: Joi.string()
+                            .allow('')
+                            .max(255),
+                        isDone: Joi.boolean()
+                    }
+                }),
+                relationships: {
+                    assignee: Joi.object({
+                        type: Joi.string()
+                            .valid('users')
+                            .required(),
+                        id: Joi.number().required()
+                    })
+                }
             },
             continueOnError: true
         },
-        handler: [
-            AllowOnlyAuthenticated,
-            OnError,
-            async ctx => {
-                const { id: userId } = ctx.state.user;
-                const { id } = ctx.params;
-                const { title, details, isDone, assigneeId } = ctx.request.body;
-                await update({ id, title, details, isDone, assigneeId }, userId);
-                ctx.status = 204;
-            }
-        ]
+        handler: [AllowOnlyAuthenticated, OnError, taskController.patch]
     },
     {
         method: 'delete',

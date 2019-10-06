@@ -41,4 +41,14 @@ const post = async ctx => {
     ctx.body = parseTaskResponse(await taskService.getById(id, userId));
     ctx.status = 201;
 };
-module.exports = { get, post };
+
+const patch = async ctx => {
+    const { id: userId } = ctx.state.user;
+    const { id } = ctx.params;
+    const { title, details, isDone } = getUtil(ctx, 'request.body.data.attributes', {});
+    const assigneeId = getUtil(ctx, 'request.body.relationships.assignee.id');
+    await taskService.update({ id, title, details, isDone, assigneeId }, userId);
+    ctx.status = 204;
+};
+
+module.exports = { get, post, patch };

@@ -152,8 +152,8 @@ describe('business : Task', () => {
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
             try {
                 const res = await authenticatedUser
-                    .put('/tasks/1')
-                    .send({ title: 'Buy better PC' });
+                    .patch('/tasks/1')
+                    .send({ data: { type: 'tasks', attributes: { title: 'Buy better PC' } } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('You are not part of that project!');
             } catch (err) {
@@ -164,9 +164,9 @@ describe('business : Task', () => {
             await User.create({ username: 't', password: '$' });
             await Task.create({ title: 'B', details: 'f', projectId: 1, isDone: false });
             try {
-                const res = await authenticatedUser.put('/tasks/1').send({
-                    assigneeId: 2
-                });
+                const res = await authenticatedUser
+                    .patch('/tasks/1')
+                    .send({ relationships: { assignee: { type: 'users', id: 2 } } });
                 expect(res.status).to.equal(400);
                 expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
             } catch (err) {
