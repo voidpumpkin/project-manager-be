@@ -29,6 +29,7 @@
         "dotenv": "^8.1.0",
         "eslint": "^6.4.0",
         "eslint-config-voidpumpkin": "https://github.com/voidpumpkin/eslint-config-voidpumpkin.git",
+        "eslint-plugin-prettier": "3.1.0",
         "koa": "^2.8.1",
         "koa-joi-router": "^6.0.0",
         "koa-logger": "^3.2.1",
