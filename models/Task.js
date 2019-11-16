@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Task.associate = models => {
-        const { Task, User } = models;
+        const { Task } = models;
         //Has substasks
         Task.hasMany(Task, {
             as: 'subtask',

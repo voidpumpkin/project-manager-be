@@ -43,13 +43,10 @@ describe('business : Task', () => {
             });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
-            try {
-                const res = await authenticatedUser.get('/tasks/1');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser.get('/tasks/1');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not part of that project!');
         });
     });
 
@@ -64,19 +61,16 @@ describe('business : Task', () => {
                 phoneNumber: '6664666'
             });
             await Project.create({ title: 'C', details: '', managerId: 2 });
-            try {
-                const res = await authenticatedUser.post('/tasks').send({
-                    data: {
-                        type: 'tasks',
-                        attributes: { title: 'Buy PC', details: 'from wallmart' }
-                    },
-                    relationships: { project: { type: 'projects', id: 2 } }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser.post('/tasks').send({
+                data: {
+                    type: 'tasks',
+                    attributes: { title: 'Buy PC', details: 'from wallmart' }
+                },
+                relationships: { project: { type: 'projects', id: 2 } }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not part of that project!');
         });
         it('allow asignee only if it participates in project', async () => {
             await User.create({
@@ -87,63 +81,50 @@ describe('business : Task', () => {
                 email: 'uncle@bob.com',
                 phoneNumber: '6664666'
             });
-            try {
-                const res = await authenticatedUser.post('/tasks').send({
-                    data: {
-                        type: 'tasks',
-                        attributes: {
-                            title: 'Buy PC',
-                            details: 'from wallmart'
-                        }
-                    },
-                    relationships: {
-                        project: { type: 'projects', id: 1 },
-                        assignee: { type: 'users', id: 2 }
+
+            const res = await authenticatedUser.post('/tasks').send({
+                data: {
+                    type: 'tasks',
+                    attributes: {
+                        title: 'Buy PC',
+                        details: 'from wallmart'
                     }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
-            } catch (err) {
-                throw err;
-            }
+                },
+                relationships: {
+                    project: { type: 'projects', id: 1 },
+                    assignee: { type: 'users', id: 2 }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
         });
         it('parent project does not exist', async () => {
-            try {
-                const res = await authenticatedUser.post('/tasks').send({
-                    data: {
-                        type: 'tasks',
-                        attributes: { title: 'Buy PC', details: 'from wallmart' }
-                    },
-                    relationships: {
-                        project: { type: 'projects', id: 20 },
-                        task: { type: 'tasks', id: 1 }
-                    }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'parent project with id 20 does not exist'
-                );
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.post('/tasks').send({
+                data: {
+                    type: 'tasks',
+                    attributes: { title: 'Buy PC', details: 'from wallmart' }
+                },
+                relationships: {
+                    project: { type: 'projects', id: 20 },
+                    task: { type: 'tasks', id: 1 }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('parent project with id 20 does not exist');
         });
         it('parent task does not exist', async () => {
-            try {
-                const res = await authenticatedUser.post('/tasks').send({
-                    data: {
-                        type: 'tasks',
-                        attributes: { title: 'Buy PC', details: 'from wallmart' }
-                    },
-                    relationships: {
-                        project: { type: 'projects', id: 1 },
-                        task: { type: 'tasks', id: 11 }
-                    }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('parent task with id 11 does not exist');
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.post('/tasks').send({
+                data: {
+                    type: 'tasks',
+                    attributes: { title: 'Buy PC', details: 'from wallmart' }
+                },
+                relationships: {
+                    project: { type: 'projects', id: 1 },
+                    task: { type: 'tasks', id: 11 }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('parent task with id 11 does not exist');
         });
         it('task does not belong to the same project', async () => {
             const project = await Project.create({
@@ -152,22 +133,19 @@ describe('business : Task', () => {
                 managerId: 1
             });
             await project.addParticipator(authenticatedUserDBInst);
-            try {
-                const res = await authenticatedUser.post('/tasks').send({
-                    data: {
-                        type: 'tasks',
-                        attributes: { title: 'Buy PC', details: 'from wallmart' }
-                    },
-                    relationships: {
-                        project: { type: 'projects', id: 2 },
-                        task: { type: 'tasks', id: 1 }
-                    }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('parent task with id 1 does not exist');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser.post('/tasks').send({
+                data: {
+                    type: 'tasks',
+                    attributes: { title: 'Buy PC', details: 'from wallmart' }
+                },
+                relationships: {
+                    project: { type: 'projects', id: 2 },
+                    task: { type: 'tasks', id: 1 }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('parent task with id 1 does not exist');
         });
     });
     describe('Edit a Task', () => {
@@ -182,15 +160,12 @@ describe('business : Task', () => {
             });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
-            try {
-                const res = await authenticatedUser
-                    .patch('/tasks/1')
-                    .send({ data: { type: 'tasks', attributes: { title: 'Buy better PC' } } });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser
+                .patch('/tasks/1')
+                .send({ data: { type: 'tasks', attributes: { title: 'Buy better PC' } } });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not part of that project!');
         });
         it('allow asignee only if it participates in project', async () => {
             await User.create({
@@ -202,15 +177,12 @@ describe('business : Task', () => {
                 phoneNumber: '6664666'
             });
             await Task.create({ title: 'B', details: 'f', projectId: 1, isDone: false });
-            try {
-                const res = await authenticatedUser
-                    .patch('/tasks/1')
-                    .send({ relationships: { assignee: { type: 'users', id: 2 } } });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser
+                .patch('/tasks/1')
+                .send({ relationships: { assignee: { type: 'users', id: 2 } } });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('Asignee must be a project participator');
         });
     });
     describe('Delete a Task', () => {
@@ -225,13 +197,10 @@ describe('business : Task', () => {
             });
             await Project.create({ title: 'C', details: '', managerId: 2 });
             await Task.create({ title: 'B', details: 'f', projectId: 2, isDone: false });
-            try {
-                const res = await authenticatedUser.delete('/tasks/1');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('You are not part of that project!');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser.delete('/tasks/1');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not part of that project!');
         });
     });
 });

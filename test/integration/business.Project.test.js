@@ -38,15 +38,10 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 2
             });
-            try {
-                const res = await authenticatedUser.get('/projects/1');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'You are not participating in this project'
-                );
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await authenticatedUser.get('/projects/1');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not participating in this project');
         });
     });
 
@@ -66,15 +61,9 @@ describe('business : Project', () => {
                 managerId: 2
             });
             await project.addParticipator(user);
-            try {
-                const res = await authenticatedUser.get('/projects/1/relationships/participators');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'You are not participating in this project'
-                );
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.get('/projects/1/relationships/participators');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not participating in this project');
         });
     });
 
@@ -88,47 +77,39 @@ describe('business : Project', () => {
                 email: 'uncle@bob.com',
                 phoneNumber: '6664666'
             });
-            try {
-                const res = await authenticatedUser.post('/projects').send({
-                    data: {
-                        type: 'projects',
-                        attributes: {
-                            title: 'Create character',
-                            details: 'just copy from internet'
-                        }
-                    },
-                    relationships: {
-                        manager: {
-                            type: 'users',
-                            id: 2
-                        }
+            const res = await authenticatedUser.post('/projects').send({
+                data: {
+                    type: 'projects',
+                    attributes: {
+                        title: 'Create character',
+                        details: 'just copy from internet'
                     }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal('Manager can only be set as yourself');
-            } catch (err) {
-                throw err;
-            }
+                },
+                relationships: {
+                    manager: {
+                        type: 'users',
+                        id: 2
+                    }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('Manager can only be set as yourself');
         });
         it('automaticly add myself as a paticipator', async () => {
-            try {
-                const res = await authenticatedUser.post('/projects').send({
-                    data: {
-                        type: 'projects',
-                        attributes: {
-                            title: 'Create character',
-                            details: 'just copy from internet'
-                        }
+            const res = await authenticatedUser.post('/projects').send({
+                data: {
+                    type: 'projects',
+                    attributes: {
+                        title: 'Create character',
+                        details: 'just copy from internet'
                     }
-                });
-                const projectParticipator = await ProjectParticipator.findOne({
-                    where: { projectId: 1, participatorId: 1 }
-                });
-                expect(projectParticipator).to.be.not.null;
-                expect(res.status).to.equal(201);
-            } catch (err) {
-                throw err;
-            }
+                }
+            });
+            const projectParticipator = await ProjectParticipator.findOne({
+                where: { projectId: 1, participatorId: 1 }
+            });
+            expect(projectParticipator).to.be.not.null;
+            expect(res.status).to.equal(201);
         });
     });
 
@@ -139,22 +120,16 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            try {
-                const res = await authenticatedUser.patch('/projects/1').send({
-                    data: {
-                        type: 'projects',
-                        attributes: {
-                            title: 'hi'
-                        }
+            const res = await authenticatedUser.patch('/projects/1').send({
+                data: {
+                    type: 'projects',
+                    attributes: {
+                        title: 'hi'
                     }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'You are not participating in this project'
-                );
-            } catch (err) {
-                throw err;
-            }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not participating in this project');
         });
         it('allow only when you are manager', async () => {
             await User.create({
@@ -171,22 +146,18 @@ describe('business : Project', () => {
                 managerId: 2
             });
             await project.addParticipator(authenticatedUserDBInst);
-            try {
-                const res = await authenticatedUser.patch('/projects/1').send({
-                    data: {
-                        type: 'projects',
-                        attributes: {
-                            title: 'hi'
-                        }
+            const res = await authenticatedUser.patch('/projects/1').send({
+                data: {
+                    type: 'projects',
+                    attributes: {
+                        title: 'hi'
                     }
-                });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'Projects can be edited only by project managers'
-                );
-            } catch (err) {
-                throw err;
-            }
+                }
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal(
+                'Projects can be edited only by project managers'
+            );
         });
     });
     describe('Delete project', () => {
@@ -196,15 +167,9 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 1
             });
-            try {
-                const res = await authenticatedUser.delete('/projects/1');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'You are not participating in this project'
-                );
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.delete('/projects/1');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal('You are not participating in this project');
         });
         it('allow only when you are manager', async () => {
             await User.create({
@@ -221,15 +186,11 @@ describe('business : Project', () => {
                 managerId: 2
             });
             await project.addParticipator(authenticatedUserDBInst);
-            try {
-                const res = await authenticatedUser.delete('/projects/1');
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'Projects can be deleted only by project managers'
-                );
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.delete('/projects/1');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal(
+                'Projects can be deleted only by project managers'
+            );
         });
     });
     describe('Add project participator', () => {
@@ -247,24 +208,20 @@ describe('business : Project', () => {
                 details: 'just copy from internet',
                 managerId: 2
             });
-            try {
-                const res = await authenticatedUser
-                    .post('/projects/1/relationships/participators')
-                    .send({
-                        relationships: {
-                            participator: {
-                                type: 'users',
-                                id: 1
-                            }
+            const res = await authenticatedUser
+                .post('/projects/1/relationships/participators')
+                .send({
+                    relationships: {
+                        participator: {
+                            type: 'users',
+                            id: 1
                         }
-                    });
-                expect(res.status).to.equal(400);
-                expect(res.body.errors[0].title).to.equal(
-                    'Participators can be added only when you are the Project manager'
-                );
-            } catch (err) {
-                throw err;
-            }
+                    }
+                });
+            expect(res.status).to.equal(400);
+            expect(res.body.errors[0].title).to.equal(
+                'Participators can be added only when you are the Project manager'
+            );
         });
     });
 });

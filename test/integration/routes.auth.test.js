@@ -21,33 +21,26 @@ describe('routes : auth', () => {
                 email: 'uncle@bob.com',
                 phoneNumber: '6664666'
             });
-            try {
-                const res = await chai
-                    .request(server)
-                    .post('/login')
-                    .send({ username: 'test', password: 'test' });
-                expect(res.status).to.equal(204);
-                expect(res).to.have.cookie('koa:sess');
-                expect(res).to.have.cookie('koa:sess.sig');
-            } catch (err) {
-                throw err;
-            }
+
+            const res = await chai
+                .request(server)
+                .post('/login')
+                .send({ username: 'test', password: 'test' });
+            expect(res.status).to.equal(204);
+            expect(res).to.have.cookie('koa:sess');
+            expect(res).to.have.cookie('koa:sess.sig');
         });
     });
 
     describe('POST /logout', () => {
         it('should succefully logout', async () => {
-            try {
-                const res = await chai
-                    .request(server)
-                    .post('/logout')
-                    .send({ username: 'test', password: 'test' });
-                expect(res.status).to.equal(204);
-                expect(res).to.not.have.cookie('koa:sess');
-                expect(res).to.not.have.cookie('koa:sess.sig');
-            } catch (err) {
-                throw err;
-            }
+            const res = await chai
+                .request(server)
+                .post('/logout')
+                .send({ username: 'test', password: 'test' });
+            expect(res.status).to.equal(204);
+            expect(res).to.not.have.cookie('koa:sess');
+            expect(res).to.not.have.cookie('koa:sess.sig');
         });
     });
 });

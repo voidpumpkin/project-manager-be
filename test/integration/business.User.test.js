@@ -7,6 +7,7 @@ const server = require('../../server');
 const { sequelize, User } = require('../../models');
 
 describe('business : User', () => {
+    // eslint-disable-next-line no-unused-vars
     let authenticatedUser, authenticatedUserDBInst;
 
     beforeEach(async () => {
@@ -25,17 +26,13 @@ describe('business : User', () => {
 
     describe('Get myself', () => {
         it('get', async () => {
-            try {
-                const res = await authenticatedUser.get('/users/me');
-                expect(res.status).to.equal(200);
-                expect(res.type).to.equal('application/json');
-                expect(res.body.data.attributes.username).to.equal('test');
-                expect(res.body.data.attributes.password).to.exist;
-                expect(res.body.relationships.managedProjects).to.be.an('array');
-                expect(res.body.relationships.participatedProjects).to.be.an('array');
-            } catch (err) {
-                throw err;
-            }
+            const res = await authenticatedUser.get('/users/me');
+            expect(res.status).to.equal(200);
+            expect(res.type).to.equal('application/json');
+            expect(res.body.data.attributes.username).to.equal('test');
+            expect(res.body.data.attributes.password).to.exist;
+            expect(res.body.relationships.managedProjects).to.be.an('array');
+            expect(res.body.relationships.participatedProjects).to.be.an('array');
         });
     });
 });

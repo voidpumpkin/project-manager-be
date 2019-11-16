@@ -49,7 +49,7 @@ const getById = async (id, userId) => {
 const addParticipator = async (projectId, participatorId, userId) => {
     const project = await Project.findByPk(projectId);
     if (!project) {
-        throw new BusinessRuleError(`Project with id ${id} does not exist`);
+        throw new BusinessRuleError(`Project with id ${projectId} does not exist`);
     }
     if (project.managerId !== userId) {
         throw new BusinessRuleError(
@@ -58,7 +58,7 @@ const addParticipator = async (projectId, participatorId, userId) => {
     }
     const user = await User.findByPk(participatorId);
     if (!project) {
-        throw new BusinessRuleError(`User with id ${id} does not exist`);
+        throw new BusinessRuleError(`User with id ${projectId} does not exist`);
     }
     const addedObject = await project.addParticipator(user);
     if (!addedObject) {
@@ -96,9 +96,9 @@ const update = async (project, userId) => {
 };
 
 const removeParticipator = async (projectId, participatorId) => {
-    const projectInstance = await Project.findByPk(id);
+    const projectInstance = await Project.findByPk(projectId);
     if (!projectInstance) {
-        throw new BusinessRuleError(`Project with id ${id} does not exist`);
+        throw new BusinessRuleError(`Project with id ${projectId} does not exist`);
     }
     if (!(await isParticipator(projectInstance, participatorId))) {
         throw new BusinessRuleError('You are not participating in this project');

@@ -18,7 +18,7 @@ fs.readdirSync(__dirname)
         db[modelClassName] = model;
     });
 
-for (modelName in db) {
+for (const modelName in db) {
     if (db[modelName].associate) {
         db[modelName].associate(db);
     }

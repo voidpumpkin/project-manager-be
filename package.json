@@ -28,7 +28,7 @@
         "cross-env": "^6.0.0",
         "dotenv": "^8.1.0",
         "eslint": "^6.4.0",
-        "eslint-config-voidpumpkin": "ssh://git@github.com:voidpumpkin/eslint-config-voidpumpkin.git",
+        "eslint-config-voidpumpkin": "https://github.com/voidpumpkin/eslint-config-voidpumpkin.git",
         "koa": "^2.8.1",
         "koa-joi-router": "^6.0.0",
         "koa-logger": "^3.2.1",
