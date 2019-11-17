@@ -4,6 +4,10 @@ const Koa = require('koa');
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
 
+//CORS
+const cors = require('@koa/cors');
+app.use(cors());
+
 // logger
 const logger = require('koa-logger');
 const transporter = process.env.LOG_REQ === 'true' ? str => console.log(str) : () => {};

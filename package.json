@@ -22,6 +22,7 @@
     },
     "homepage": "https://github.com/voidpumpkin/project-manager-be#readme",
     "dependencies": {
+        "@koa/cors": "2",
         "bcrypt": "^3.0.6",
         "chai": "^4.2.0",
         "chai-http": "^4.3.0",
