@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 //CORS
 const cors = require('@koa/cors');
-app.use(cors());
+app.use(cors({ credentials: true }));
 
 // logger
 const logger = require('koa-logger');
