@@ -16,7 +16,7 @@ app.use(logger(transporter));
 // sessions
 const session = require('koa-session');
 app.keys = ['voidpumpkin-session-secret'];
-app.use(session(app));
+app.use(session({ sameSite: 'lax' }, app));
 
 // authentication
 require('./utils/Authentication');
