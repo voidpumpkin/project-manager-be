@@ -72,4 +72,29 @@ const destroy = async id => {
     await user.destroy();
 };
 
-module.exports = { hashPassword, getAllIds, getById, create, update, destroy };
+const getParticipatedProjects = async id => {
+    const userInstance = await userModel.findByPk(id);
+    if (!userInstance) {
+        throw new BusinessRuleError(`User with id ${id} does not exist`);
+    }
+    return await userInstance.getProject({ raw: true });
+};
+
+const getManagedProjects = async id => {
+    const userInstance = await userModel.findByPk(id);
+    if (!userInstance) {
+        throw new BusinessRuleError(`User with id ${id} does not exist`);
+    }
+    return await userInstance.getManagedProject({ raw: true });
+};
+
+module.exports = {
+    hashPassword,
+    getAllIds,
+    getById,
+    create,
+    update,
+    destroy,
+    getParticipatedProjects,
+    getManagedProjects
+};

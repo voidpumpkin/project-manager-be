@@ -8,6 +8,16 @@ const router = Router();
 const routes = [
     {
         method: 'get',
+        path: '/users/me/participated-projects',
+        handler: [AllowOnlyAuthenticated, OnError, userController.getMyParticipatedProjects]
+    },
+    {
+        method: 'get',
+        path: '/users/me/managed-projects',
+        handler: [AllowOnlyAuthenticated, OnError, userController.getMyManagedProjects]
+    },
+    {
+        method: 'get',
         path: '/users',
         handler: [AllowOnlyAuthenticated, OnError, userController.getAll]
     },

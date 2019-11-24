@@ -63,4 +63,47 @@ const destoyMe = async ctx => {
     ctx.status = 204;
 };
 
-module.exports = { parseUserResponse, getAll, getMe, get, post, patchMe, destoyMe };
+const getMyParticipatedProjects = async ctx => {
+    const { id } = ctx.state.user;
+    const projects = await userService.getParticipatedProjects(id);
+    const data = projects.map(project => {
+        const { id, title, details, createdAt, updatedAt, managerId } = project;
+        return {
+            links: { self: `/projects/${id}` },
+            type: 'projects',
+            id,
+            attributes: { title, details, createdAt, updatedAt, managerId }
+        };
+    });
+    const links = { self: `/users/me/participated-projects` };
+    ctx.body = { links, data };
+    ctx.status = 200;
+};
+const getMyManagedProjects = async ctx => {
+    const { id } = ctx.state.user;
+    const projects = await userService.getManagedProjects(id);
+    const data = projects.map(project => {
+        const { id, title, details, createdAt, updatedAt, managerId } = project;
+        return {
+            links: { self: `/projects/${id}` },
+            type: 'projects',
+            id,
+            attributes: { title, details, createdAt, updatedAt, managerId }
+        };
+    });
+    const links = { self: `/users/me/participated-projects` };
+    ctx.body = { links, data };
+    ctx.status = 200;
+};
+
+module.exports = {
+    parseUserResponse,
+    getAll,
+    getMe,
+    get,
+    post,
+    patchMe,
+    destoyMe,
+    getMyParticipatedProjects,
+    getMyManagedProjects
+};
