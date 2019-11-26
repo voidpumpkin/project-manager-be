@@ -59,6 +59,7 @@ const patchMe = async ctx => {
 
 const destoyMe = async ctx => {
     const { id } = ctx.state.user;
+    ctx.logout();
     await userService.destroy(id);
     ctx.status = 204;
 };
