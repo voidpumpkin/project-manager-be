@@ -15,7 +15,11 @@ const routes = [
             },
             continueOnError: true
         },
-        handler: [AllowOnlyAuthenticated, OnError, projectController.getParticipators]
+        handler: [
+            AllowOnlyAuthenticated,
+            // OnError,
+            projectController.getParticipators
+        ]
     },
     {
         method: 'get',

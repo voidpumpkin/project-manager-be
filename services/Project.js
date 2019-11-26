@@ -26,7 +26,7 @@ const getParticipatorsIds = async (id, userId) => {
 
 const getTasks = async id => {
     const projectInstance = await Project.findByPk(id);
-    return await projectInstance.getTask();
+    return await projectInstance.getTask({ raw: true });
 };
 
 const getTaskIds = async id => {
@@ -42,8 +42,12 @@ const getById = async (id, userId) => {
     if (!(await isParticipator(rawProjectInstance, userId))) {
         throw new BusinessRuleError('You are not participating in this project');
     }
-    const taskIds = await getTaskIds(id);
-    return { taskIds, ...rawProjectInstance };
+    const participators = (await getParticipators(id, userId)).map(e => ({
+        id: e.id,
+        username: e.username
+    }));
+    const tasks = await getTasks(id);
+    return { tasks, ...rawProjectInstance, participators };
 };
 
 const addParticipator = async (projectId, participatorId, userId) => {
