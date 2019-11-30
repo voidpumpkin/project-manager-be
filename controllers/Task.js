@@ -4,7 +4,7 @@ const { get: getUtil } = require('../utils');
 const parseTaskResponse = task => {
     const { projectId, assigneeId, taskId, id, ...attributes } = task;
     const project = { links: { self: `/projects/${projectId}` }, type: 'projects', id: projectId };
-    const asignee = !assigneeId
+    const assignee = !assigneeId
         ? null
         : { links: { self: `/users/${assigneeId}` }, type: 'users', id: assigneeId };
     const parentTask = !taskId
@@ -17,7 +17,7 @@ const parseTaskResponse = task => {
     const subTasks = { links: { self: `/tasks/${id}/relationships/subtasks` } };
     const links = { self: `/tasks/${id}` };
     const data = { type: 'tasks', id, attributes };
-    const relationships = { asignee, project, task: parentTask, subTasks };
+    const relationships = { assignee, project, task: parentTask, subTasks };
     return { links, data, relationships };
 };
 
