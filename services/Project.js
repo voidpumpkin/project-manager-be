@@ -93,7 +93,7 @@ const update = async (project, userId) => {
     if (projectInstance.managerId !== userId) {
         throw new BusinessRuleError('Projects can be edited only by project managers');
     }
-    if (managerId && (await isParticipator(projectInstance, managerId))) {
+    if (managerId && !(await isParticipator(projectInstance, managerId))) {
         throw new BusinessRuleError('Only participating users can become managers');
     }
     await projectInstance.update({ title, details, managerId });

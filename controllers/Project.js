@@ -31,8 +31,8 @@ const post = async ctx => {
 const patch = async ctx => {
     const { id: userId } = ctx.state.user;
     const { id } = ctx.params;
-    const { title, details } = getUtil(ctx, 'request.body.data.attributes');
-    const managerId = getUtil(ctx, 'request.body.relationships.manager.id');
+    const { title, details } = getUtil(ctx, 'request.body.data.attributes') || {};
+    const managerId = getUtil(ctx, 'request.body.relationships.manager.id') || {};
     await projectService.update({ id, title, details, managerId }, userId);
     ctx.status = 204;
 };
