@@ -28,6 +28,18 @@ module.exports = {
                     participatorId: 2,
                     createdAt: new Date(),
                     updatedAt: new Date()
+                },
+                {
+                    projectId: 3,
+                    participatorId: 3,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                },
+                {
+                    projectId: 4,
+                    participatorId: 3,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
                 }
             ],
             {}

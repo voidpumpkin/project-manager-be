@@ -11,7 +11,8 @@ module.exports = {
                     isDone: false,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    projectId: 1
+                    projectId: 1,
+                    assigneeId: 1
                 },
                 {
                     title: 'Code something',
@@ -19,7 +20,8 @@ module.exports = {
                     isDone: false,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    projectId: 1
+                    projectId: 1,
+                    assigneeId: 1
                 },
                 {
                     title: 'Create epic map',
@@ -27,7 +29,8 @@ module.exports = {
                     isDone: true,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    projectId: 1
+                    projectId: 1,
+                    assigneeId: 1
                 }
             ],
             {}

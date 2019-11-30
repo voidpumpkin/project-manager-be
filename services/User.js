@@ -88,6 +88,14 @@ const getManagedProjects = async id => {
     return await userInstance.getManagedProject({ raw: true });
 };
 
+const getTasks = async id => {
+    const userInstance = await userModel.findByPk(id);
+    if (!userInstance) {
+        throw new BusinessRuleError(`User with id ${id} does not exist`);
+    }
+    return await userInstance.getAssignedTask({ raw: true });
+};
+
 module.exports = {
     hashPassword,
     getAllIds,
@@ -96,5 +104,6 @@ module.exports = {
     update,
     destroy,
     getParticipatedProjects,
-    getManagedProjects
+    getManagedProjects,
+    getTasks
 };

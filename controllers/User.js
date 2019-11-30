@@ -97,6 +97,42 @@ const getMyManagedProjects = async ctx => {
     ctx.status = 200;
 };
 
+const getMyTasks = async ctx => {
+    const { id } = ctx.state.user;
+    const tasks = await userService.getTasks(id);
+    const data = tasks.map(project => {
+        const {
+            id,
+            title,
+            details,
+            isDone,
+            createdAt,
+            updatedAt,
+            projectId,
+            taskId,
+            assigneeId
+        } = project;
+        return {
+            links: { self: `/tasks/${id}` },
+            type: 'tasks',
+            id,
+            attributes: {
+                title,
+                details,
+                isDone,
+                createdAt,
+                updatedAt,
+                projectId,
+                taskId,
+                assigneeId
+            }
+        };
+    });
+    const links = { self: `/users/me/tasks` };
+    ctx.body = { links, data };
+    ctx.status = 200;
+};
+
 module.exports = {
     parseUserResponse,
     getAll,
@@ -106,5 +142,6 @@ module.exports = {
     patchMe,
     destoyMe,
     getMyParticipatedProjects,
-    getMyManagedProjects
+    getMyManagedProjects,
+    getMyTasks
 };

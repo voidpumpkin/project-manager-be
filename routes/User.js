@@ -18,6 +18,11 @@ const routes = [
     },
     {
         method: 'get',
+        path: '/users/me/tasks',
+        handler: [AllowOnlyAuthenticated, OnError, userController.getMyTasks]
+    },
+    {
+        method: 'get',
         path: '/users',
         handler: [AllowOnlyAuthenticated, OnError, userController.getAll]
     },

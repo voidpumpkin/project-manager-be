@@ -12,7 +12,8 @@ module.exports = {
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     projectId: 1,
-                    taskId: 2
+                    taskId: 2,
+                    assigneeId: 1
                 },
                 {
                     title: 'Download VS code',
@@ -21,7 +22,8 @@ module.exports = {
                     updatedAt: new Date(),
                     isDone: true,
                     projectId: 1,
-                    taskId: 2
+                    taskId: 2,
+                    assigneeId: 1
                 },
                 {
                     title: 'Give up',
@@ -30,7 +32,8 @@ module.exports = {
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     projectId: 1,
-                    taskId: 2
+                    taskId: 2,
+                    assigneeId: 1
                 }
             ],
             {}
