@@ -34,6 +34,15 @@ const getTaskIds = async id => {
     return tasks.map(e => e.id);
 };
 
+const getSubTasks = (taskId, tasks) => {
+    const subTasks = tasks.filter(e => e.taskId === taskId);
+    const leftTasks = tasks.filter(e => e.taskId !== taskId);
+    subTasks.forEach(task => {
+        task.subTasks = getSubTasks(task.id, leftTasks);
+    });
+    return subTasks;
+};
+
 const getById = async (id, userId) => {
     const rawProjectInstance = await Project.findByPk(id, { raw: true });
     if (!rawProjectInstance) {
@@ -47,7 +56,12 @@ const getById = async (id, userId) => {
         username: e.username
     }));
     const tasks = await getTasks(id);
-    return { tasks, ...rawProjectInstance, participators };
+    const topTasks = tasks.filter(e => e.taskId === null);
+    const allSubTasks = tasks.filter(e => e.taskId !== null);
+    topTasks.forEach(task => {
+        task.subTasks = getSubTasks(task.id, allSubTasks);
+    });
+    return { tasks: topTasks, ...rawProjectInstance, participators };
 };
 
 const addParticipator = async (projectId, participatorId, userId) => {
