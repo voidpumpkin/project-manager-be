@@ -56,12 +56,13 @@ const getById = async (id, userId) => {
         username: e.username
     }));
     const tasks = await getTasks(id);
+    const taskCount = tasks.length;
     const topTasks = tasks.filter(e => e.taskId === null);
     const allSubTasks = tasks.filter(e => e.taskId !== null);
     topTasks.forEach(task => {
         task.subTasks = getSubTasks(task.id, allSubTasks);
     });
-    return { tasks: topTasks, ...rawProjectInstance, participators };
+    return { taskCount, tasks: topTasks, ...rawProjectInstance, participators };
 };
 
 const addParticipator = async (projectId, participatorId, userId) => {
