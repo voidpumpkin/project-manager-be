@@ -3,6 +3,26 @@ const { get } = require('../utils');
 const { isParticipator } = require('./Project');
 const { BusinessRuleError } = require('../utils/BusinessRuleError');
 
+const getSubTasks2 = async taskId => {
+    const taskInstance = await Task.findByPk(taskId);
+    const subTasks = (await taskInstance.getSubtask({ raw: true })) || [];
+    for (const subTask of subTasks) {
+        subTask.subTasks = await getSubTasks2(subTask.id);
+    }
+    return subTasks;
+};
+
+const countSubTasks = task => {
+    const { subTasks } = task;
+    if (subTasks.length) {
+        return subTasks.reduce((prev, curr) => {
+            return prev + 1 + countSubTasks(curr);
+        }, 0);
+    } else {
+        return 0;
+    }
+};
+
 const getById = async (id, userId) => {
     const task = await Task.findByPk(id, { raw: true });
     if (!task) {
@@ -12,7 +32,11 @@ const getById = async (id, userId) => {
     if (!(await isParticipator(project, userId))) {
         throw new BusinessRuleError('You are not part of that project!');
     }
-    return task;
+    const subTasks = await getSubTasks2(task.id);
+    const subTaskCount = subTasks.reduce((prev, curr) => {
+        return prev + 1 + countSubTasks(curr);
+    }, 0);
+    return { ...task, subTasks, subTaskCount };
 };
 
 const create = async (task, userId) => {
