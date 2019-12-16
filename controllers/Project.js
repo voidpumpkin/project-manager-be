@@ -22,7 +22,7 @@ const get = async ctx => {
 const post = async ctx => {
     const { id: userId } = ctx.state.user;
     const { title, details } = ctx.request.body.data.attributes;
-    const managerId = getUtil(ctx, 'request.body.relationships.manager.id');
+    const managerId = userId;
     const { id } = await projectService.create({ title, details, managerId }, userId);
     ctx.body = parseProjectResponse(await projectService.getById(id, userId));
     ctx.status = 201;

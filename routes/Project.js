@@ -84,15 +84,7 @@ const routes = [
                             .max(255)
                             .required()
                     }
-                },
-                relationships: Joi.object({
-                    manager: {
-                        type: Joi.string()
-                            .valid('users')
-                            .required(),
-                        id: Joi.number().required()
-                    }
-                })
+                }
             },
             continueOnError: true
         },

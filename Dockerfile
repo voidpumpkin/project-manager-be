@@ -1,6 +1,6 @@
-FROM node:10.17.0-alpine
+FROM node:latest
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-CMD ["node", "./server.js"]
+COPY package.json /app 
+RUN yarn
+COPY . /app
+CMD yarn start
